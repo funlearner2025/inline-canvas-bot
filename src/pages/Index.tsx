@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { CosmicCard } from "@/components/CosmicCard";
 import { initTelegram } from "@/lib/telegram";
 import dailyAstroBg from "@/assets/daily-astro-bg.jpg";
@@ -6,6 +7,8 @@ import futureMonthBg from "@/assets/future-month-bg.jpg";
 import futureDayBg from "@/assets/future-day-bg.png";
 
 const Index = () => {
+  const navigate = useNavigate();
+
   useEffect(() => {
     // Initialize Telegram Web App
     const tg = initTelegram();
@@ -37,10 +40,7 @@ const Index = () => {
           buttonText="Celestial Vibe Today"
           buttonVariant="celestial"
           backgroundImage={dailyAstroBg}
-          onClick={() => {
-            console.log("Daily Panchangam clicked");
-            // Navigate to daily page when implemented
-          }}
+          onClick={() => navigate("/daily-panchangam")}
         />
 
         <CosmicCard
