@@ -45,8 +45,8 @@ const Index = () => {
 
         <CosmicCard
           title="Future Month"
-          subtitle="Traverse the planetary waters guiding the energies of a future month"
-          buttonText="Explore Future Horizons"
+          subtitle="Traverse the planetary realms guiding the energies of a future month."
+          buttonText="Journey Future Heavens"
           buttonVariant="cosmic"
           backgroundImage={futureMonthBg}
           onClick={() => {
