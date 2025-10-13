@@ -35,7 +35,7 @@ const Index = () => {
       {/* Cards Container */}
       <div className="max-w-md mx-auto space-y-6">
         <CosmicCard
-          title="Daily Panchangam"
+          title="Astro"
           subtitle="Discover what the stars have aligned for your daily journey"
           buttonText="Celestial Vibe Today"
           buttonVariant="celestial"
