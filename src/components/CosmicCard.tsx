@@ -19,7 +19,7 @@ export const CosmicCard = ({
 }: CosmicCardProps) => {
   return (
     <div
-      className="relative w-full h-[200px] rounded-2xl overflow-hidden group cursor-pointer transition-transform hover:scale-[1.02]"
+      className="relative w-full h-[400px] rounded-2xl overflow-hidden group cursor-pointer transition-transform hover:scale-[1.02]"
       onClick={onClick}
     >
       {/* Background Image */}

@@ -2,8 +2,8 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { CosmicCard } from "@/components/CosmicCard";
 import { initTelegram } from "@/lib/telegram";
-import dailyAstroBg from "@/assets/daily-astro-bg.jpg";
-import futureMonthBg from "@/assets/future-month-bg.jpg";
+import dailyAstroBg from "@/assets/daily-astro-bg.png";
+import futureMonthBg from "@/assets/future-month-bg.png";
 import futureDayBg from "@/assets/future-day-bg.png";
 
 const Index = () => {
@@ -35,8 +35,8 @@ const Index = () => {
       {/* Cards Container */}
       <div className="max-w-md mx-auto space-y-6">
         <CosmicCard
-          title="Astro"
-          subtitle="Discover what the stars have aligned for your daily journey"
+          title="Daily Astro"
+          subtitle="Trace your daily path through the movements of the stars."
           buttonText="Celestial Vibe Today"
           buttonVariant="celestial"
           backgroundImage={dailyAstroBg}
@@ -56,8 +56,8 @@ const Index = () => {
         />
 
         <CosmicCard
-          title="Future Day"
-          subtitle="Look ahead to meet the cosmic influences of any future day"
+          title="Future day"
+          subtitle="Traverse the planetary realms guiding the energies of a future month"
           buttonText="Decode Celestial Day"
           buttonVariant="mystical"
           backgroundImage={futureDayBg}
