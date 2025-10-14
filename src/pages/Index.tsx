@@ -56,8 +56,8 @@ const Index = () => {
         />
 
         <CosmicCard
-          title="Future day"
-          subtitle="Traverse the planetary realms guiding the energies of a future month"
+          title="Future Day"
+          subtitle="Look ahead to unveil the cosmic influences of any future day"
           buttonText="Decode Celestial Day"
           buttonVariant="mystical"
           backgroundImage={futureDayBg}

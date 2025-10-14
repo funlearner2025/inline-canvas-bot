@@ -32,10 +32,10 @@ export const CosmicCard = ({
       <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-black/30" />
       
       {/* Content */}
-      <div className="relative h-full flex flex-col justify-between p-6">
-        <div>
+      <div className={`relative h-full flex flex-col p-6 ${title === "Daily Astro" ? "justify-end items-center text-center pb-8" : "justify-between"}`}>
+        <div className={title === "Daily Astro" ? "mb-4" : ""}>
           <h2 className="text-white text-2xl font-bold mb-2">{title}</h2>
-          <p className="text-white/90 text-sm max-w-[200px]">{subtitle}</p>
+          <p className={`text-white/90 text-sm ${title === "Daily Astro" ? "mx-auto" : "max-w-[200px]"}`}>{subtitle}</p>
         </div>
         
         <div>
