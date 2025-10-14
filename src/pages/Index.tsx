@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { CosmicCard } from "@/components/CosmicCard";
 import { initTelegram } from "@/lib/telegram";
-import dailyAstroBg from "@/assets/daily-astro-output.png";
+import dailyAstroBg from "@/assets/daily-astro-bg.png";
 import futureMonthBg from "@/assets/future-month-bg.png";
 import futureDayBg from "@/assets/future-day-bg.png";
 
