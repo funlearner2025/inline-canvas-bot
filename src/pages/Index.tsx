@@ -18,10 +18,18 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background px-4 py-8">
+    <div 
+      className="min-h-screen bg-background w-full"
+      style={{
+        paddingTop: 'max(1rem, env(safe-area-inset-top))',
+        paddingBottom: 'max(1rem, env(safe-area-inset-bottom))',
+        paddingLeft: 'max(1rem, env(safe-area-inset-left))',
+        paddingRight: 'max(1rem, env(safe-area-inset-right))',
+      }}
+    >
       {/* Header */}
-      <header className="mb-8 text-center">
-        <h1 className="text-3xl md:text-4xl font-bold text-foreground">
+      <header className="mb-6 sm:mb-8 text-center px-4">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground leading-tight">
           Discover Your{" "}
           <span className="bg-gradient-to-r from-cosmic-orange to-cosmic-gold bg-clip-text text-transparent">
             Cosmic
@@ -33,7 +41,7 @@ const Index = () => {
       </header>
 
       {/* Cards Container */}
-      <div className="max-w-md mx-auto space-y-6">
+      <div className="max-w-lg mx-auto px-4 space-y-4 sm:space-y-6 pb-4">
         <CosmicCard
           title="Daily Astro"
           subtitle="Trace your daily path through the movements of the stars."

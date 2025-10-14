@@ -15,9 +15,9 @@ const buttonVariants = cva(
         secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
-        celestial: "bg-celestial-blue text-white hover:bg-celestial-blue-hover font-semibold",
-        cosmic: "bg-cosmic-orange text-white hover:bg-cosmic-orange-btn/90 font-semibold",
-        mystical: "bg-mystical-teal text-white hover:bg-mystical-teal-hover font-semibold",
+        celestial: "bg-celestial-blue text-white hover:bg-celestial-blue-hover font-semibold shadow-[0_0_20px_rgba(59,130,246,0.5)] hover:shadow-[0_0_30px_rgba(59,130,246,0.7)] transition-all duration-300",
+        cosmic: "bg-cosmic-orange text-white hover:bg-cosmic-orange-btn/90 font-semibold shadow-[0_0_20px_rgba(251,146,60,0.5)] hover:shadow-[0_0_30px_rgba(251,146,60,0.7)] transition-all duration-300",
+        mystical: "bg-mystical-teal text-white hover:bg-mystical-teal-hover font-semibold shadow-[0_0_20px_rgba(20,184,166,0.5)] hover:shadow-[0_0_30px_rgba(20,184,166,0.7)] transition-all duration-300",
       },
       size: {
         default: "h-10 px-4 py-2",
