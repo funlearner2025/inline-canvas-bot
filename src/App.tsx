@@ -3,22 +3,20 @@
 import { useEffect, useMemo } from "react";
 import { Routes, Route, Navigate, Router } from "react-router-dom";
 
-//  Import official Telegram Mini Apps router integration
+//  Telegram Mini Apps integration
 import { useIntegration } from "@telegram-apps/react-router-integration";
 import { initNavigator } from "@telegram-apps/sdk-react";
 
-//  Import your app pages
-import Home from "./pages/Home";
+//  Pages that actually exist
+import Index from "./pages/Index";
 import DailyAstro from "./pages/DailyAstro";
-import FutureMonth from "./pages/FutureMonth";
-import FutureDay from "./pages/FutureDay";
+import DailyPanchangam from "./pages/DailyPanchangam";
+import NotFound from "./pages/NotFound";
 
 export default function App() {
-  // Initialize a Telegram-compatible navigator (works with BackButton)
   const navigator = useMemo(() => initNavigator("app-navigator"), []);
   const [location, reactNavigator] = useIntegration(navigator);
 
-  // Attach/detach Telegram BackButton sync
   useEffect(() => {
     navigator.attach();
     return () => navigator.detach();
@@ -27,12 +25,11 @@ export default function App() {
   return (
     <Router location={location} navigator={reactNavigator}>
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Index />} />
         <Route path="/daily" element={<DailyAstro />} />
-        <Route path="/futuremonth" element={<FutureMonth />} />
-        <Route path="/futureday" element={<FutureDay />} />
-        {/* Redirect any unknown path to Home */}
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="/panchangam" element={<DailyPanchangam />} />
+        {/* Catch-all for undefined routes */}
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>
   );
