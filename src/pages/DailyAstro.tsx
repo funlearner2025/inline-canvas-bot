@@ -1,15 +1,15 @@
 // src/pages/DailyAstro.tsx
 
 import { useState } from "react";
-import { locationManager, miniApps } from "@telegram-apps/sdk"; // ✅ fixed import
-import { postDailyAstro } from "../lib/api"; // your existing API call function
+import { locationManager } from "@telegram-apps/sdk"; // ✅ fixed import
+import { postDailyAstro } from "../lib/api";
 
 export default function DailyAstro() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [astroData, setAstroData] = useState<string | null>(null);
 
-  //  Step 1: Get user location (Telegram first, browser fallback)
+  // ✅ Step 1: Get user location (Telegram first, browser fallback)
   async function getLocation() {
     setError(null);
     setLoading(true);
@@ -20,9 +20,6 @@ export default function DailyAstro() {
       return { lat: loc.latitude, lon: loc.longitude };
     } catch (e) {
       console.warn("Telegram location failed:", e);
-
-      // Optional: You can open Telegram location settings on user click later
-      // miniApps.openLocationSettings();
 
       // Fallback to browser geolocation
       try {
@@ -44,7 +41,7 @@ export default function DailyAstro() {
     }
   }
 
-  //  Step 2: Handle click — get location and call backend
+  // ✅ Step 2: Handle click — get location and call backend
   async function handleDailyAstro() {
     const coords = await getLocation();
     if (!coords) return;
@@ -61,7 +58,7 @@ export default function DailyAstro() {
     }
   }
 
-  //  Step 3: Render
+  // ✅ Step 3: Render
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-gradient-to-b from-gray-900 to-black text-white">
       <h1 className="text-2xl font-semibold mb-6">🌞 Celestial Vibe Today</h1>
@@ -84,9 +81,9 @@ export default function DailyAstro() {
         </pre>
       )}
 
-      {/*  Updated to use correct API */}
+      {/* ✅ Works with current SDK version */}
       <button
-        onClick={() => miniApps.openLocationSettings()}
+        onClick={() => window.Telegram?.WebApp?.openSettings()}
         className="mt-4 text-blue-400 underline text-sm"
       >
         Fix Location Permissions
