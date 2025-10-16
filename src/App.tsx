@@ -1,46 +1,39 @@
 // src/App.tsx
 
-import { useEffect, useMemo } from "react";
-import { Routes, Route, Navigate, Router, createMemoryRouter, createRoutesFromElements } from "react-router-dom";
+import { Routes, Route, Navigate, BrowserRouter } from "react-router-dom";
+import { useEffect } from "react";
+import { init, viewport } from "@telegram-apps/sdk";
 
-//  Telegram Mini Apps integration
-import { useIntegration } from "@telegram-apps/react-router-integration";
-
-//  Pages that actually exist
 import Index from "./pages/Index";
 import DailyAstro from "./pages/DailyAstro";
 import DailyPanchangam from "./pages/DailyPanchangam";
 import NotFound from "./pages/NotFound";
 
 export default function App() {
-  //  Create a memory-based router for in-app navigation
-  const navigator = useMemo(() => createMemoryRouter(
-    createRoutesFromElements(
-      <>
-        <Route path="/" element={<Index />} />
-        <Route path="/daily" element={<DailyAstro />} />
-        <Route path="/panchangam" element={<DailyPanchangam />} />
-        <Route path="*" element={<NotFound />} />
-      </>
-    )
-  ), []);
-
-  // Integrate Telegram router (BackButton sync)
-  const [location, reactNavigator] = useIntegration(navigator);
-
-  // Attach / detach lifecycle
   useEffect(() => {
-    console.log("Telegram router integration active");
+    try {
+      // Initialize Telegram Mini Apps SDK
+      init();
+
+      // Handle safe area layout
+      if (viewport.mount.isAvailable()) {
+        viewport.mount();
+      }
+
+      console.log("✅ Telegram Mini App initialized");
+    } catch (err) {
+      console.warn("⚠️ Telegram init failed:", err);
+    }
   }, []);
 
   return (
-    <Router location={location} navigator={reactNavigator}>
+    <BrowserRouter>
       <Routes>
         <Route path="/" element={<Index />} />
         <Route path="/daily" element={<DailyAstro />} />
         <Route path="/panchangam" element={<DailyPanchangam />} />
-        <Route path="*" element={<NotFound />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
-    </Router>
+    </BrowserRouter>
   );
 }
