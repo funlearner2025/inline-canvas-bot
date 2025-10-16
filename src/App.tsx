@@ -1,11 +1,10 @@
 // src/App.tsx
 
 import { useEffect, useMemo } from "react";
-import { Routes, Route, Navigate, Router } from "react-router-dom";
+import { Routes, Route, Navigate, Router, createMemoryRouter, createRoutesFromElements } from "react-router-dom";
 
 //  Telegram Mini Apps integration
 import { useIntegration } from "@telegram-apps/react-router-integration";
-import { initNavigator } from "@telegram-apps/sdk-react";
 
 //  Pages that actually exist
 import Index from "./pages/Index";
@@ -14,13 +13,25 @@ import DailyPanchangam from "./pages/DailyPanchangam";
 import NotFound from "./pages/NotFound";
 
 export default function App() {
-  const navigator = useMemo(() => initNavigator("app-navigator"), []);
+  //  Create a memory-based router for in-app navigation
+  const navigator = useMemo(() => createMemoryRouter(
+    createRoutesFromElements(
+      <>
+        <Route path="/" element={<Index />} />
+        <Route path="/daily" element={<DailyAstro />} />
+        <Route path="/panchangam" element={<DailyPanchangam />} />
+        <Route path="*" element={<NotFound />} />
+      </>
+    )
+  ), []);
+
+  // Integrate Telegram router (BackButton sync)
   const [location, reactNavigator] = useIntegration(navigator);
 
+  // Attach / detach lifecycle
   useEffect(() => {
-    navigator.attach();
-    return () => navigator.detach();
-  }, [navigator]);
+    console.log("Telegram router integration active");
+  }, []);
 
   return (
     <Router location={location} navigator={reactNavigator}>
@@ -28,7 +39,6 @@ export default function App() {
         <Route path="/" element={<Index />} />
         <Route path="/daily" element={<DailyAstro />} />
         <Route path="/panchangam" element={<DailyPanchangam />} />
-        {/* Catch-all for undefined routes */}
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>
