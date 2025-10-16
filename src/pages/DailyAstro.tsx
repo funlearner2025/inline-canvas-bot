@@ -1,7 +1,7 @@
 // src/pages/DailyAstro.tsx
 
 import { useState } from "react";
-import { locationManager, methods } from "@telegram-apps/sdk"; // ✅ Telegram SDK v3
+import { locationManager, miniApps } from "@telegram-apps/sdk"; // ✅ fixed import
 import { postDailyAstro } from "../lib/api"; // your existing API call function
 
 export default function DailyAstro() {
@@ -21,8 +21,8 @@ export default function DailyAstro() {
     } catch (e) {
       console.warn("Telegram location failed:", e);
 
-      // Optional: Prompt Telegram location settings (user-triggered only)
-      // await methods.web_app_open_location_settings();
+      // Optional: You can open Telegram location settings on user click later
+      // miniApps.openLocationSettings();
 
       // Fallback to browser geolocation
       try {
@@ -84,9 +84,9 @@ export default function DailyAstro() {
         </pre>
       )}
 
-      {/* Optional button to open Telegram location settings manually */}
+      {/*  Updated to use correct API */}
       <button
-        onClick={() => methods.web_app_open_location_settings()}
+        onClick={() => miniApps.openLocationSettings()}
         className="mt-4 text-blue-400 underline text-sm"
       >
         Fix Location Permissions
