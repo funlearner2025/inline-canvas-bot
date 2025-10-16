@@ -1,82 +1,82 @@
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { CosmicCard } from "@/components/CosmicCard";
-import { initTelegram } from "@/lib/telegram";
-import dailyAstroBg from "@/assets/daily-astro-bg.png";
-import futureMonthBg from "@/assets/future-month-bg.png";
-import futureDayBg from "@/assets/future-day-bg.png";
+// src/pages/Index.tsx
 
-const Index = () => {
+import { useNavigate } from "react-router-dom";
+
+export default function Index() {
   const navigate = useNavigate();
 
-  useEffect(() => {
-    // Initialize Telegram Web App
-    const tg = initTelegram();
-    if (tg) {
-      tg.ready();
-    }
-  }, []);
-
   return (
-    <div 
-      className="min-h-screen bg-background w-full"
-      style={{
-        paddingTop: 'max(1rem, env(safe-area-inset-top))',
-        paddingBottom: 'max(1rem, env(safe-area-inset-bottom))',
-        paddingLeft: 'max(1rem, env(safe-area-inset-left))',
-        paddingRight: 'max(1rem, env(safe-area-inset-right))',
-      }}
-    >
-      {/* Header */}
-      <header className="mb-6 sm:mb-8 text-center px-4">
-        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground leading-tight">
-          Discover Your{" "}
-          <span className="bg-gradient-to-r from-cosmic-orange to-cosmic-gold bg-clip-text text-transparent">
-            Cosmic
-          </span>{" "}
-          <span className="bg-gradient-to-r from-cosmic-purple to-cosmic-pink bg-clip-text text-transparent">
-            Journey
-          </span>
+    <div className="flex flex-col min-h-screen bg-gray-950 text-white">
+      {/* ✅ Hero Section */}
+      <div
+        className="flex flex-col justify-center items-center flex-1 text-center bg-cover bg-center"
+        // ✅ Use root-based path since assets are under /public/assets/
+        style={{ backgroundImage: "url('/assets/daily-astro-bg.png')" }}
+      >
+        <h1 className="text-3xl font-bold mb-4 drop-shadow-lg">
+          🌞 Celestial Vibe Today
         </h1>
-      </header>
+        <p className="text-sm text-gray-300 mb-6">
+          Discover your Panchangam & Nakshatra for the day
+        </p>
+        <button
+          onClick={() => navigate("/daily")}
+          className="px-6 py-3 bg-indigo-600 rounded-xl shadow-md hover:bg-indigo-500 transition"
+        >
+          Explore Daily Astro
+        </button>
+      </div>
 
-      {/* Cards Container */}
-      <div className="max-w-lg mx-auto px-4 space-y-4 sm:space-y-6 pb-4">
-        <CosmicCard
-          title="Daily Astro"
-          subtitle="Trace your daily path through the movements of the stars."
-          buttonText="Celestial Vibe Today"
-          buttonVariant="celestial"
-          backgroundImage={dailyAstroBg}
-          onClick={() => navigate("/daily-panchangam")}
-        />
+      {/* ✅ Cards Section */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-6 bg-gray-900">
+        {/* Daily Astro Card */}
+        <div
+          className="relative rounded-2xl overflow-hidden shadow-lg cursor-pointer"
+          onClick={() => navigate("/daily")}
+        >
+          <img
+            src="/assets/daily-astro-bg.png"
+            alt="Daily Astro"
+            className="w-full h-48 object-cover opacity-80"
+          />
+          <div className="absolute inset-0 bg-black/40 flex flex-col justify-center items-center">
+            <h2 className="text-xl font-semibold">Celestial Vibe Today</h2>
+            <p className="text-xs text-gray-300 mt-1">Daily Astro Insights</p>
+          </div>
+        </div>
 
-        <CosmicCard
-          title="Future Month"
-          subtitle="Traverse the planetary realms guiding the energies of a future month."
-          buttonText="Journey Future Heavens"
-          buttonVariant="cosmic"
-          backgroundImage={futureMonthBg}
-          onClick={() => {
-            console.log("Future Month clicked");
-            // Navigate to future month page when implemented
-          }}
-        />
+        {/* Future Month Card */}
+        <div
+          className="relative rounded-2xl overflow-hidden shadow-lg cursor-pointer"
+          onClick={() => navigate("/futuremonth")}
+        >
+          <img
+            src="/assets/future-month-bg.png"
+            alt="Future Month"
+            className="w-full h-48 object-cover opacity-80"
+          />
+          <div className="absolute inset-0 bg-black/40 flex flex-col justify-center items-center">
+            <h2 className="text-xl font-semibold">Journey Future Heavens</h2>
+            <p className="text-xs text-gray-300 mt-1">Future Month Insights</p>
+          </div>
+        </div>
 
-        <CosmicCard
-          title="Future Day"
-          subtitle="Look ahead to unveil the cosmic influences of any future day"
-          buttonText="Decode Celestial Day"
-          buttonVariant="mystical"
-          backgroundImage={futureDayBg}
-          onClick={() => {
-            console.log("Future Day clicked");
-            // Navigate to future day page when implemented
-          }}
-        />
+        {/* Future Day Card */}
+        <div
+          className="relative rounded-2xl overflow-hidden shadow-lg cursor-pointer"
+          onClick={() => navigate("/futureday")}
+        >
+          <img
+            src="/assets/future-day-bg.png"
+            alt="Future Day"
+            className="w-full h-48 object-cover opacity-80"
+          />
+          <div className="absolute inset-0 bg-black/40 flex flex-col justify-center items-center">
+            <h2 className="text-xl font-semibold">Decode Celestial Day</h2>
+            <p className="text-xs text-gray-300 mt-1">Plan your perfect day</p>
+          </div>
+        </div>
       </div>
     </div>
   );
-};
-
-export default Index;
+}
