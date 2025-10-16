@@ -1,121 +1,96 @@
 // src/pages/DailyAstro.tsx
 
-import { useEffect, useMemo, useState } from 'react';
-import { useTelegram } from '@/hooks/useTelegram';
-import { postDailyAstro } from '@/lib/api';
-
-type Loc = { lat: number; lon: number; accuracy?: number };
+import { useState } from "react";
+import { locationManager, methods } from "@telegram-apps/sdk"; // ✅ Telegram SDK v3
+import { postDailyAstro } from "../lib/api"; // your existing API call function
 
 export default function DailyAstro() {
-  const { tg } = useTelegram();
-  const [loc, setLoc] = useState<Loc | null>(null);
-  const [busy, setBusy] = useState(false);
-  const [msg, setMsg] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [astroData, setAstroData] = useState<string | null>(null);
 
-  const canRequest = useMemo(() => Boolean(tg?.locationManager?.requestLocation), [tg]);
+  //  Step 1: Get user location (Telegram first, browser fallback)
+  async function getLocation() {
+    setError(null);
+    setLoading(true);
 
-  async function requestLocation() {
-    setMsg(null);
     try {
-      if (canRequest) {
-        const p = await tg!.locationManager!.requestLocation();
-        setLoc({ lat: p.latitude, lon: p.longitude, accuracy: p.accuracy });
-        return;
-      }
+      // Try Telegram Mini App location first
+      const loc = await locationManager.requestLocation();
+      return { lat: loc.latitude, lon: loc.longitude };
+    } catch (e) {
+      console.warn("Telegram location failed:", e);
 
-      // Fallback if LocationManager is unavailable
-      if ('geolocation' in navigator) {
-        await new Promise<void>((resolve, reject) => {
+      // Optional: Prompt Telegram location settings (user-triggered only)
+      // await methods.web_app_open_location_settings();
+
+      // Fallback to browser geolocation
+      try {
+        const coords = await new Promise<GeolocationCoordinates>((resolve, reject) => {
           navigator.geolocation.getCurrentPosition(
-            (pos) => {
-              setLoc({ lat: pos.coords.latitude, lon: pos.coords.longitude, accuracy: pos.coords.accuracy });
-              resolve();
-            },
+            (pos) => resolve(pos.coords),
             (err) => reject(err),
-            { enableHighAccuracy: true, timeout: 10000, maximumAge: 30000 }
+            { enableHighAccuracy: true, timeout: 8000 }
           );
         });
-        return;
+        return { lat: coords.latitude, lon: coords.longitude };
+      } catch (geoErr) {
+        console.error("Browser geolocation failed:", geoErr);
+        setError("Unable to get location. Please enable location in Telegram or browser.");
+        return null;
       }
-
-      throw new Error('Location not supported');
-    } catch (e: any) {
-      setMsg(e?.message ?? 'Failed to get location');
-    }
-  }
-
-  async function submit() {
-    if (!loc) return;
-    setBusy(true);
-    setMsg(null);
-    try {
-      const payload = { lat: loc.lat, lon: loc.lon };
-      const res = await postDailyAstro(payload);
-      setMsg('✨ Request sent. Check Telegram for your Daily Astro!');
-      console.log('Daily Astro response:', res);
-    } catch (e: any) {
-      setMsg(e?.message ?? 'Failed to send request');
     } finally {
-      setBusy(false);
+      setLoading(false);
     }
   }
 
-  useEffect(() => {
-    requestLocation(); // Auto request on first render
-  }, []);
+  //  Step 2: Handle click — get location and call backend
+  async function handleDailyAstro() {
+    const coords = await getLocation();
+    if (!coords) return;
 
+    try {
+      setLoading(true);
+      const data = await postDailyAstro(coords.lat, coords.lon);
+      setAstroData(data?.message || "No data received");
+    } catch (e) {
+      console.error("Daily Astro fetch failed:", e);
+      setError("Failed to fetch daily astro data. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  //  Step 3: Render
   return (
-    <div className="min-h-screen w-full bg-gradient-to-b from-black via-gray-900 to-black text-white"
-         style={{ paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'env(safe-area-inset-bottom)' }}>
-      <div className="mx-auto max-w-md px-4 py-6 space-y-4">
-        <header className="text-center space-y-1">
-          <h1 className="text-2xl font-semibold tracking-wide">Celestial Vibe Today</h1>
-          <p className="text-sm text-gray-300">Share your location to get today's astrological insights.</p>
-        </header>
+    <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-gradient-to-b from-gray-900 to-black text-white">
+      <h1 className="text-2xl font-semibold mb-6">🌞 Celestial Vibe Today</h1>
 
-        <section className="rounded-2xl bg-white/5 backdrop-blur-sm shadow-xl ring-1 ring-white/10 p-4 space-y-3">
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-300">Location</span>
-            <button
-              onClick={requestLocation}
-              className="px-3 py-1.5 text-sm rounded-full bg-white/10 hover:bg-white/20 transition"
-            >
-              {loc ? 'Re-detect' : 'Detect'}
-            </button>
-          </div>
+      <button
+        onClick={handleDailyAstro}
+        disabled={loading}
+        className="px-6 py-3 bg-indigo-600 rounded-xl shadow-lg hover:bg-indigo-500 disabled:opacity-60 transition"
+      >
+        {loading ? "Fetching your stars..." : "Get Today's Astro"}
+      </button>
 
-          <div className="rounded-xl bg-black/30 p-3 text-sm">
-            {loc
-              ? (
-                <div className="space-y-1">
-                  <div>Latitude: <span className="text-teal-300">{loc.lat.toFixed(6)}</span></div>
-                  <div>Longitude: <span className="text-teal-300">{loc.lon.toFixed(6)}</span></div>
-                  {typeof loc.accuracy === 'number' && <div>Accuracy: ±{Math.round(loc.accuracy)}m</div>}
-                </div>
-              )
-              : <div className="text-gray-400">No location yet.</div>
-            }
-          </div>
+      {error && (
+        <p className="text-red-400 mt-4 text-sm text-center max-w-sm">{error}</p>
+      )}
 
-          <button
-            disabled={!loc || busy}
-            onClick={submit}
-            className="w-full rounded-xl py-3 font-medium bg-gradient-to-r from-indigo-500 to-fuchsia-500 disabled:opacity-50 disabled:cursor-not-allowed hover:brightness-110 transition shadow-lg"
-          >
-            {busy ? 'Sending…' : 'Send to Backend'}
-          </button>
+      {astroData && (
+        <pre className="bg-gray-800 mt-6 p-4 rounded-xl text-sm whitespace-pre-wrap text-left max-w-md">
+          {astroData}
+        </pre>
+      )}
 
-          {!!msg && (
-            <div className="text-xs text-gray-300">{msg}</div>
-          )}
-
-          {!canRequest && (
-            <p className="text-xs text-amber-300">
-              LocationManager not available; using browser geolocation fallback.
-            </p>
-          )}
-        </section>
-      </div>
+      {/* Optional button to open Telegram location settings manually */}
+      <button
+        onClick={() => methods.web_app_open_location_settings()}
+        className="mt-4 text-blue-400 underline text-sm"
+      >
+        Fix Location Permissions
+      </button>
     </div>
   );
 }
