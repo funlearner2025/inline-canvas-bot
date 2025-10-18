@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { searchLocation } from '@/lib/api';
 import { MapPin, Loader2 } from 'lucide-react';
+import { TelegramInput } from './TelegramInput';
 
 interface LocationAutocompleteProps {
   value: string;
@@ -12,7 +13,8 @@ interface LocationAutocompleteProps {
 
 /**
  * Autocomplete input for location search
- * Uses Flask backend webhook with Google Maps API
+ * Uses Telegram-style input with Tailwind animations
+ * Connects to Flask backend webhook with Google Maps API
  */
 export function LocationAutocomplete({ value, onChange, placeholder }: LocationAutocompleteProps) {
   const [suggestions, setSuggestions] = useState<string[]>([]);
@@ -61,24 +63,25 @@ export function LocationAutocomplete({ value, onChange, placeholder }: LocationA
 
   return (
     <div className="relative w-full">
-      {/* Telegram-style Input with Tailwind styling */}
+      {/* Telegram-style Input with icon */}
       <div className="relative">
-        <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-        <input
+        <TelegramInput
           ref={inputRef}
           type="text"
           value={value}
           onChange={(e) => onChange(e.target.value)}
           onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
           placeholder={placeholder || 'Search location...'}
-          className="w-full pl-11 pr-10 py-3 bg-gray-800/50 border border-gray-700 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+          icon={<MapPin className="w-5 h-5" />}
         />
         {loading && (
-          <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-indigo-400 animate-spin" />
+          <div className="absolute right-3 top-1/2 -translate-y-1/2">
+            <Loader2 className="w-5 h-5 text-[var(--tg-link-color,#8774e1)] animate-spin" />
+          </div>
         )}
       </div>
 
-      {/* Suggestions dropdown */}
+      {/* Suggestions dropdown with Tailwind animations */}
       <AnimatePresence>
         {showSuggestions && suggestions.length > 0 && (
           <motion.div
@@ -86,16 +89,16 @@ export function LocationAutocomplete({ value, onChange, placeholder }: LocationA
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
-            className="absolute z-50 w-full mt-2 bg-gray-800 border border-gray-700 rounded-xl shadow-2xl overflow-hidden max-h-60 overflow-y-auto"
+            className="absolute z-50 w-full mt-2 bg-[var(--tg-secondary-bg-color,rgba(0,0,0,0.8))] border border-[var(--tg-hint-color,rgba(255,255,255,0.1))] rounded-xl shadow-2xl overflow-hidden max-h-60 overflow-y-auto backdrop-blur-xl"
           >
             {suggestions.map((location, index) => (
               <motion.button
                 key={index}
                 onClick={() => handleSelect(location)}
-                className="w-full px-4 py-3 text-left text-white hover:bg-gray-700 transition-colors flex items-center gap-2 border-b border-gray-700 last:border-b-0"
+                className="w-full px-4 py-3 text-left text-[var(--tg-text-color,#fff)] hover:bg-[var(--tg-hint-color,rgba(255,255,255,0.1))] transition-colors flex items-center gap-2 border-b border-[var(--tg-hint-color,rgba(255,255,255,0.05))] last:border-b-0"
                 whileTap={{ scale: 0.98 }}
               >
-                <MapPin className="w-4 h-4 text-indigo-400 flex-shrink-0" />
+                <MapPin className="w-4 h-4 text-[var(--tg-link-color,#8774e1)] flex-shrink-0" />
                 <span className="text-sm">{location}</span>
               </motion.button>
             ))}

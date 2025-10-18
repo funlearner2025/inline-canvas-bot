@@ -68,6 +68,15 @@ All colors MUST be HSL.
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Telegram WebApp default theme colors (light) */
+    --tg-bg-color: #ffffff;
+    --tg-text-color: #000000;
+    --tg-hint-color: #999999;
+    --tg-link-color: #2481cc;
+    --tg-button-color: #2481cc;
+    --tg-button-text-color: #ffffff;
+    --tg-secondary-bg-color: #f4f4f5;
   }
 
   .dark {
@@ -106,6 +115,15 @@ All colors MUST be HSL.
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Telegram WebApp default theme colors (dark) */
+    --tg-bg-color: #18222d;
+    --tg-text-color: #ffffff;
+    --tg-hint-color: #708499;
+    --tg-link-color: #6ab2f2;
+    --tg-button-color: #5288c1;
+    --tg-button-text-color: #ffffff;
+    --tg-secondary-bg-color: #131415;
   }
 }
 

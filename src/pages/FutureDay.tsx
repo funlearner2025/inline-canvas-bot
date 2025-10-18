@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowLeft, CalendarDays, Sparkles, Loader2 } from 'lucide-react';
 import { LocationAutocomplete } from '@/components/LocationAutocomplete';
+import { TelegramSelect } from '@/components/TelegramSelect';
 import { CosmicBackground } from '@/components/CosmicBackground';
 import { postFutureDay } from '@/lib/api';
 
@@ -93,9 +94,9 @@ export default function FutureDay() {
             {/* Input Card */}
             <div className="bg-gray-900/60 backdrop-blur-xl border border-gray-800 rounded-2xl p-6 shadow-2xl">
               <div className="space-y-6">
-                {/* Location Input */}
+                {/* Location Input - Telegram UI style */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-[var(--tg-hint-color,#999)] mb-2">
                     Location
                   </label>
                   <LocationAutocomplete
@@ -105,53 +106,50 @@ export default function FutureDay() {
                   />
                 </div>
 
-                {/* Date Selectors Grid */}
+                {/* Date Selectors Grid - Telegram UI style */}
                 <div className="grid grid-cols-3 gap-4">
                   {/* Day Selector */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                    <label className="block text-sm font-medium text-[var(--tg-hint-color,#999)] mb-2">
                       Day
                     </label>
-                    <select
+                    <TelegramSelect
                       value={day}
                       onChange={(e) => setDay(Number(e.target.value))}
-                      className="w-full px-3 py-3 bg-gray-800/50 border border-gray-700 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
                     >
                       {[...Array(daysInMonth)].map((_, idx) => (
                         <option key={idx + 1} value={idx + 1}>
                           {idx + 1}
                         </option>
                       ))}
-                    </select>
+                    </TelegramSelect>
                   </div>
 
                   {/* Month Selector */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                    <label className="block text-sm font-medium text-[var(--tg-hint-color,#999)] mb-2">
                       Month
                     </label>
-                    <select
+                    <TelegramSelect
                       value={month}
                       onChange={(e) => setMonth(Number(e.target.value))}
-                      className="w-full px-3 py-3 bg-gray-800/50 border border-gray-700 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
                     >
                       {months.map((m, idx) => (
                         <option key={idx} value={idx + 1}>
                           {m.slice(0, 3)}
                         </option>
                       ))}
-                    </select>
+                    </TelegramSelect>
                   </div>
 
                   {/* Year Selector */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                    <label className="block text-sm font-medium text-[var(--tg-hint-color,#999)] mb-2">
                       Year
                     </label>
-                    <select
+                    <TelegramSelect
                       value={year}
                       onChange={(e) => setYear(Number(e.target.value))}
-                      className="w-full px-3 py-3 bg-gray-800/50 border border-gray-700 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
                     >
                       {[...Array(10)].map((_, idx) => {
                         const y = new Date().getFullYear() + idx;
@@ -161,7 +159,7 @@ export default function FutureDay() {
                           </option>
                         );
                       })}
-                    </select>
+                    </TelegramSelect>
                   </div>
                 </div>
 

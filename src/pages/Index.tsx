@@ -67,23 +67,29 @@ export default function Index() {
             <Sparkles className="w-16 h-16 text-yellow-400" />
           </motion.div>
 
+          {/* Main Title with Colored Words */}
           <motion.h1
-            className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-purple-400 via-pink-400 to-indigo-400 bg-clip-text text-transparent"
+            className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 leading-tight"
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.2, duration: 0.6 }}
           >
-            Cosmic Insights
+            <span className="text-gray-900 dark:text-white">Discover Your </span>
+            <span className="text-orange-500">Cosmic </span>
+            <span className="text-purple-500">Journey</span>
           </motion.h1>
 
-          <motion.p
-            className="text-gray-300 text-lg sm:text-xl mb-8 max-w-md"
+          {/* Spiritual Quote */}
+          <motion.div
+            className="text-gray-300 text-base sm:text-lg mb-8 max-w-2xl leading-relaxed space-y-2"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4, duration: 0.6 }}
           >
-            Discover your Panchangam & Nakshatra guided by the stars
-          </motion.p>
+            <p className="mb-2">🪐 The universe is not outside you — it moves through you.</p>
+            <p className="mb-2">Your chart is a mirror, reflecting karma, grace, and awakening.</p>
+            <p>Enter the realm of Vedic astrology — where time speaks and the soul listens.</p>
+          </motion.div>
 
           <motion.button
             onClick={() => navigate("/daily")}

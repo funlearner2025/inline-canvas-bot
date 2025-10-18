@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Calendar, Sparkles, Loader2 } from 'lucide-react';
 import { LocationAutocomplete } from '@/components/LocationAutocomplete';
+import { TelegramSelect } from '@/components/TelegramSelect';
 import { CosmicBackground } from '@/components/CosmicBackground';
 import { postFutureMonth } from '@/lib/api';
 
@@ -88,9 +89,9 @@ export default function FutureMonth() {
             {/* Input Card */}
             <div className="bg-gray-900/60 backdrop-blur-xl border border-gray-800 rounded-2xl p-6 shadow-2xl">
               <div className="space-y-6">
-                {/* Location Input */}
+                {/* Location Input - Telegram UI style */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-[var(--tg-hint-color,#999)] mb-2">
                     Location
                   </label>
                   <LocationAutocomplete
@@ -100,33 +101,32 @@ export default function FutureMonth() {
                   />
                 </div>
 
-                {/* Month Selector */}
+                {/* Month Selector - Telegram UI style */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-[var(--tg-hint-color,#999)] mb-2">
                     Month
                   </label>
-                  <select
+                  <TelegramSelect
                     value={month}
                     onChange={(e) => setMonth(Number(e.target.value))}
-                    className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                    icon={<Calendar className="w-5 h-5" />}
                   >
                     {months.map((m, idx) => (
                       <option key={idx} value={idx + 1}>
                         {m}
                       </option>
                     ))}
-                  </select>
+                  </TelegramSelect>
                 </div>
 
-                {/* Year Selector */}
+                {/* Year Selector - Telegram UI style */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-[var(--tg-hint-color,#999)] mb-2">
                     Year
                   </label>
-                  <select
+                  <TelegramSelect
                     value={year}
                     onChange={(e) => setYear(Number(e.target.value))}
-                    className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
                   >
                     {[...Array(10)].map((_, idx) => {
                       const y = new Date().getFullYear() + idx;
@@ -136,7 +136,7 @@ export default function FutureMonth() {
                         </option>
                       );
                     })}
-                  </select>
+                  </TelegramSelect>
                 </div>
 
                 {/* Submit Button - Telegram UI style with Tailwind enhancements */}
