@@ -103,17 +103,7 @@ export default function DailyAstro() {
             <>
               {/* Zodiac Wheel */}
               <div className="relative w-64 h-64 mb-12">
-                <motion.div
-                  className="relative w-full h-full"
-                  animate={{
-                    rotate: [0, 360],
-                  }}
-                  transition={{
-                    duration: 60,
-                    repeat: Infinity,
-                    ease: "linear",
-                  }}
-                >
+                <div className="relative w-full h-full">
                   {/* Zodiac wheel SVG */}
                   <svg
                     viewBox="0 0 200 200"
@@ -214,7 +204,7 @@ export default function DailyAstro() {
                       );
                     })}
                   </svg>
-                </motion.div>
+                </div>
               </div>
 
               {/* Text Content */}
