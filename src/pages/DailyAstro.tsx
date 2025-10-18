@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
 import { locationManager } from "@telegram-apps/sdk";
 import { postDailyAstro } from "../lib/api";
 import { Loader2, Undo2, AlertCircle } from "lucide-react";
@@ -237,60 +236,45 @@ export default function DailyAstro() {
           )}
 
           {/* Error Message */}
-          <AnimatePresence>
-            {error && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                className="mt-4 p-4 bg-red-500/20 border border-red-500/50 rounded-xl text-red-300 text-sm flex items-start gap-3"
-              >
-                <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
-                <div>
-                  <p className="font-medium mb-1">Location Error</p>
-                  <p className="text-red-200/80">{error}</p>
-                  <button
-                    onClick={() => window.Telegram?.WebApp?.openSettings()}
-                    className="mt-2 text-red-200 underline text-xs hover:text-white transition-colors"
-                  >
-                    Fix Location Permissions
-                  </button>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          {error && (
+            <div className="mt-4 p-4 bg-red-500/20 border border-red-500/50 rounded-xl text-red-300 text-sm flex items-start gap-3">
+              <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="font-medium mb-1">Location Error</p>
+                <p className="text-red-200/80">{error}</p>
+                <button
+                  onClick={() => window.Telegram?.WebApp?.openSettings()}
+                  className="mt-2 text-red-200 underline text-xs hover:text-white transition-colors"
+                >
+                  Fix Location Permissions
+                </button>
+              </div>
+            </div>
+          )}
 
           {/* Results Card */}
-          <AnimatePresence>
-            {astroData && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                className="bg-gradient-to-br from-indigo-900/40 to-purple-900/40 backdrop-blur-xl border border-indigo-500/30 rounded-2xl p-6 shadow-2xl"
-              >
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-xl font-semibold">Your Cosmic Insights</h3>
-                  <motion.button
-                    onClick={() => {
-                      setAstroData(null);
-                      setError(null);
-                    }}
-                    className="text-sm text-gray-400 hover:text-white transition-colors"
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    Refresh
-                  </motion.button>
-                </div>
-                
-                <div className="prose prose-invert max-w-none">
-                  <pre className="whitespace-pre-wrap text-sm text-gray-200 leading-relaxed bg-black/20 p-4 rounded-lg">
-                    {typeof astroData === 'string' ? astroData : JSON.stringify(astroData, null, 2)}
-                  </pre>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          {astroData && (
+            <div className="bg-gradient-to-br from-indigo-900/40 to-purple-900/40 backdrop-blur-xl border border-indigo-500/30 rounded-2xl p-6 shadow-2xl">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-xl font-semibold">Your Cosmic Insights</h3>
+                <button
+                  onClick={() => {
+                    setAstroData(null);
+                    setError(null);
+                  }}
+                  className="text-sm text-gray-400 hover:text-white transition-colors"
+                >
+                  Refresh
+                </button>
+              </div>
+              
+              <div className="prose prose-invert max-w-none">
+                <pre className="whitespace-pre-wrap text-sm text-gray-200 leading-relaxed bg-black/20 p-4 rounded-lg">
+                  {typeof astroData === 'string' ? astroData : JSON.stringify(astroData, null, 2)}
+                </pre>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
