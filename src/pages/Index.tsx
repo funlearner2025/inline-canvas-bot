@@ -17,14 +17,14 @@ export default function Index() {
     },
     {
       title: "Future Month",
-      description: "Journey through future heavens and monthly insights",
+      description: "Traverse the planetary realms guiding the energies of a future month",
       route: "/futuremonth",
       gradient: "from-purple-600 to-pink-600",
       icon: Calendar,
     },
     {
       title: "Future Day",
-      description: "Decode celestial day and plan your perfect day",
+      description: "Look ahead to unveil the cosmic influences of any future day",
       route: "/futureday",
       gradient: "from-teal-600 to-cyan-600",
       icon: CalendarDays,
