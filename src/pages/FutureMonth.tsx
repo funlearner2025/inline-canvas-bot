@@ -5,7 +5,6 @@ import { motion } from 'framer-motion';
 import { Undo2, Calendar, Sparkles, Loader2 } from 'lucide-react';
 import { LocationAutocomplete } from '@/components/LocationAutocomplete';
 import { TelegramSelect } from '@/components/TelegramSelect';
-import { CosmicBackground } from '@/components/CosmicBackground';
 import { postFutureMonth } from '@/lib/api';
 
 export default function FutureMonth() {
@@ -43,8 +42,17 @@ export default function FutureMonth() {
   };
 
   return (
-    <div className="min-h-screen relative text-white">
-      <CosmicBackground />
+    <div className="min-h-screen relative text-white overflow-hidden">
+      {/* Background Image */}
+      <div 
+        className="fixed inset-0 -z-10 bg-cover bg-center bg-no-repeat"
+        style={{
+          backgroundImage: 'url(/assets/future-month-bg.png)',
+        }}
+      >
+        {/* Optional overlay for better text readability */}
+        <div className="absolute inset-0 bg-black/30" />
+      </div>
       
       {/* Safe area padding for mobile */}
       <div className="relative z-10 min-h-screen" style={{
