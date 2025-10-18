@@ -97,14 +97,14 @@ export default function DailyAstro() {
           <Undo2 className="w-6 h-6 text-white" />
         </button>
 
-        <div className="w-full max-w-md">
-          {/* Main Card Container */}
+        <div className="w-full max-w-md flex flex-col items-center">
+          {/* Content without card container */}
           {!astroData && (
-            <div className="bg-gradient-to-br from-indigo-950/80 via-purple-950/80 to-indigo-950/80 backdrop-blur-xl border border-indigo-500/20 rounded-3xl overflow-hidden shadow-2xl">
-              {/* Zodiac Wheel Image */}
-              <div className="relative w-full aspect-[4/3] flex items-center justify-center pt-8">
+            <>
+              {/* Zodiac Wheel */}
+              <div className="relative w-64 h-64 mb-12">
                 <motion.div
-                  className="relative w-56 h-56"
+                  className="relative w-full h-full"
                   animate={{
                     rotate: [0, 360],
                   }}
@@ -218,34 +218,20 @@ export default function DailyAstro() {
               </div>
 
               {/* Text Content */}
-              <div className="px-8 pb-8 text-center">
-                <motion.h1
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3 }}
-                  className="text-3xl font-bold mb-4 text-white"
-                >
+              <div className="text-center px-4">
+                <h1 className="text-4xl font-bold mb-6 text-white">
                   Daily Astro
-                </motion.h1>
+                </h1>
                 
-                <motion.p
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.4 }}
-                  className="text-gray-300 text-base mb-8 leading-relaxed"
-                >
+                <p className="text-gray-200 text-lg mb-10 leading-relaxed max-w-md">
                   Trace your daily path through the movements of the stars.
-                </motion.p>
+                </p>
 
                 {/* Action Button */}
-                <motion.button
+                <button
                   onClick={handleDailyAstro}
                   disabled={loading}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.5 }}
-                  className="w-full max-w-xs mx-auto px-8 py-4 bg-indigo-600 hover:bg-indigo-700 rounded-xl font-semibold text-white shadow-lg hover:shadow-indigo-500/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
-                  whileTap={{ scale: 0.98 }}
+                  className="px-12 py-4 bg-indigo-600 hover:bg-indigo-700 rounded-xl font-semibold text-white text-lg shadow-lg hover:shadow-indigo-500/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2 mx-auto"
                 >
                   {loading ? (
                     <>
@@ -255,9 +241,9 @@ export default function DailyAstro() {
                   ) : (
                     <span>Celestial Vibe Today</span>
                   )}
-                </motion.button>
+                </button>
               </div>
-            </div>
+            </>
           )}
 
           {/* Error Message */}
