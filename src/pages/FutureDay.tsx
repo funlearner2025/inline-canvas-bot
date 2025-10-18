@@ -67,27 +67,19 @@ export default function FutureDay() {
         paddingRight: 'env(safe-area-inset-right)',
       }}>
         {/* Floating Back Button - Bottom Right */}
-        <motion.button
+        <button
           onClick={() => navigate('/')}
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.95 }}
-          className="fixed bottom-6 right-6 w-14 h-14 bg-black/80 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg hover:shadow-xl border border-white/20 transition-all z-50"
+          className="fixed bottom-6 right-6 w-14 h-14 bg-black/80 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg hover:shadow-xl border border-white/20 transition-all hover:scale-110 active:scale-95 z-50"
           style={{
             bottom: 'calc(env(safe-area-inset-bottom) + 1.5rem)',
             right: 'calc(env(safe-area-inset-right) + 1.5rem)',
           }}
         >
           <Undo2 className="w-6 h-6 text-white" />
-        </motion.button>
+        </button>
 
         {/* Header */}
-        <motion.header
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="p-4 sm:p-6"
-        >
+        <header className="p-4 sm:p-6">
           <div className="flex items-center gap-3 mb-2">
             <CalendarDays className="w-8 h-8 text-teal-400" />
             <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-teal-400 to-cyan-400 bg-clip-text text-transparent">
@@ -97,15 +89,10 @@ export default function FutureDay() {
           <p className="text-gray-300 text-sm sm:text-base ml-11">
             Plan your perfect day with cosmic guidance
           </p>
-        </motion.header>
+        </header>
 
         {/* Main Content */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="px-4 sm:px-6 pb-8"
-        >
+        <div className="px-4 sm:px-6 pb-8">
           <div className="max-w-2xl mx-auto">
             {/* Input Card */}
             <div className="bg-gray-900/60 backdrop-blur-xl border border-gray-800 rounded-2xl p-6 shadow-2xl">
@@ -231,7 +218,7 @@ export default function FutureDay() {
               </motion.div>
             )}
           </div>
-        </motion.div>
+        </div>
       </div>
     </div>
   );
