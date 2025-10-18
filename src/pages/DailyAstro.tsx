@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { locationManager } from "@telegram-apps/sdk";
 import { postDailyAstro } from "../lib/api";
 import { CosmicBackground } from "@/components/CosmicBackground";
-import { Loader2, ArrowLeft, AlertCircle } from "lucide-react";
+import { Loader2, Undo2, AlertCircle } from "lucide-react";
 
 export default function DailyAstro() {
   const navigate = useNavigate();
@@ -77,19 +77,20 @@ export default function DailyAstro() {
           paddingRight: 'env(safe-area-inset-right)',
         }}
       >
-        {/* Back Button - Top Left */}
+        {/* Floating Back Button - Bottom Right */}
         <motion.button
           onClick={() => navigate('/')}
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="absolute top-4 left-4 flex items-center gap-2 text-gray-300 hover:text-white transition-colors z-20"
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.95 }}
+          className="fixed bottom-6 right-6 w-14 h-14 bg-black/80 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg hover:shadow-xl border border-white/20 transition-all z-50"
           style={{
-            top: 'calc(env(safe-area-inset-top) + 1rem)',
-            left: 'calc(env(safe-area-inset-left) + 1rem)',
+            bottom: 'calc(env(safe-area-inset-bottom) + 1.5rem)',
+            right: 'calc(env(safe-area-inset-right) + 1.5rem)',
           }}
         >
-          <ArrowLeft className="w-5 h-5" />
-          <span className="text-sm">Back</span>
+          <Undo2 className="w-6 h-6 text-white" />
         </motion.button>
 
         <div className="w-full max-w-md">
