@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { locationManager } from "@telegram-apps/sdk";
 import { postDailyAstro } from "../lib/api";
-import { CosmicBackground } from "@/components/CosmicBackground";
 import { Loader2, Undo2, AlertCircle } from "lucide-react";
 
 export default function DailyAstro() {
@@ -65,7 +64,16 @@ export default function DailyAstro() {
 
   return (
     <div className="min-h-screen relative text-white overflow-hidden">
-      <CosmicBackground />
+      {/* Background Image */}
+      <div 
+        className="fixed inset-0 -z-10 bg-cover bg-center bg-no-repeat"
+        style={{
+          backgroundImage: 'url(/assets/daily-astro-bg.png)',
+        }}
+      >
+        {/* Optional overlay for better text readability */}
+        <div className="absolute inset-0 bg-black/30" />
+      </div>
 
       {/* Safe area padding for mobile */}
       <div
@@ -78,30 +86,21 @@ export default function DailyAstro() {
         }}
       >
         {/* Floating Back Button - Bottom Right */}
-        <motion.button
+        <button
           onClick={() => navigate('/')}
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.95 }}
-          className="fixed bottom-6 right-6 w-14 h-14 bg-black/80 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg hover:shadow-xl border border-white/20 transition-all z-50"
+          className="fixed bottom-6 right-6 w-14 h-14 bg-black/80 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg hover:shadow-xl border border-white/20 transition-all hover:scale-110 active:scale-95 z-50"
           style={{
             bottom: 'calc(env(safe-area-inset-bottom) + 1.5rem)',
             right: 'calc(env(safe-area-inset-right) + 1.5rem)',
           }}
         >
           <Undo2 className="w-6 h-6 text-white" />
-        </motion.button>
+        </button>
 
         <div className="w-full max-w-md">
           {/* Main Card Container */}
           {!astroData && (
-            <motion.div
-              className="bg-gradient-to-br from-indigo-950/80 via-purple-950/80 to-indigo-950/80 backdrop-blur-xl border border-indigo-500/20 rounded-3xl overflow-hidden shadow-2xl"
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ delay: 0.1 }}
-            >
+            <div className="bg-gradient-to-br from-indigo-950/80 via-purple-950/80 to-indigo-950/80 backdrop-blur-xl border border-indigo-500/20 rounded-3xl overflow-hidden shadow-2xl">
               {/* Zodiac Wheel Image */}
               <div className="relative w-full aspect-[4/3] flex items-center justify-center pt-8">
                 <motion.div
@@ -258,7 +257,7 @@ export default function DailyAstro() {
                   )}
                 </motion.button>
               </div>
-            </motion.div>
+            </div>
           )}
 
           {/* Error Message */}
