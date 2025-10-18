@@ -38,7 +38,7 @@ export default function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
-          <Route path="/daily" element={<DailyAstro />} />
+          <Route path="/dailyastro" element={<DailyAstro />} />
           <Route path="/panchangam" element={<DailyPanchangam />} />
           <Route path="/futuremonth" element={<FutureMonth />} />
           <Route path="/futureday" element={<FutureDay />} />
