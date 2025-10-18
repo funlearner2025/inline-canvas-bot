@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { locationManager } from "@telegram-apps/sdk";
 import { postDailyAstro } from "../lib/api";
 import { CosmicBackground } from "@/components/CosmicBackground";
-import { MapPin, Loader2, ArrowLeft, Sparkles, AlertCircle } from "lucide-react";
+import { Loader2, ArrowLeft, AlertCircle } from "lucide-react";
 
 export default function DailyAstro() {
   const navigate = useNavigate();
@@ -64,12 +64,12 @@ export default function DailyAstro() {
   }
 
   return (
-    <div className="min-h-screen relative text-white">
+    <div className="min-h-screen relative text-white overflow-hidden">
       <CosmicBackground />
 
       {/* Safe area padding for mobile */}
       <div
-        className="relative z-10 min-h-screen"
+        className="relative z-10 min-h-screen flex items-center justify-center p-4"
         style={{
           paddingTop: 'env(safe-area-inset-top)',
           paddingBottom: 'env(safe-area-inset-bottom)',
@@ -77,163 +77,245 @@ export default function DailyAstro() {
           paddingRight: 'env(safe-area-inset-right)',
         }}
       >
-        {/* Header */}
-        <motion.header
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="p-4 sm:p-6"
+        {/* Back Button - Top Left */}
+        <motion.button
+          onClick={() => navigate('/')}
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="absolute top-4 left-4 flex items-center gap-2 text-gray-300 hover:text-white transition-colors z-20"
+          style={{
+            top: 'calc(env(safe-area-inset-top) + 1rem)',
+            left: 'calc(env(safe-area-inset-left) + 1rem)',
+          }}
         >
-          <button
-            onClick={() => navigate('/')}
-            className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors mb-6"
-          >
-            <ArrowLeft className="w-5 h-5" />
-            <span className="text-sm">Back to Home</span>
-          </button>
+          <ArrowLeft className="w-5 h-5" />
+          <span className="text-sm">Back</span>
+        </motion.button>
 
-          <div className="flex items-center gap-3 mb-2">
+        <div className="w-full max-w-md">
+          {/* Main Card Container */}
+          {!astroData && (
             <motion.div
-              animate={{
-                rotate: [0, 360],
-              }}
-              transition={{
-                duration: 20,
-                repeat: Infinity,
-                ease: "linear",
-              }}
+              className="bg-gradient-to-br from-indigo-950/80 via-purple-950/80 to-indigo-950/80 backdrop-blur-xl border border-indigo-500/20 rounded-3xl overflow-hidden shadow-2xl"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.1 }}
             >
-              <Sparkles className="w-8 h-8 text-yellow-400" />
-            </motion.div>
-            <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">
-              Celestial Vibe Today
-            </h1>
-          </div>
-          <p className="text-gray-300 text-sm sm:text-base ml-11">
-            Discover your cosmic insights for the day
-          </p>
-        </motion.header>
-
-        {/* Main Content */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="px-4 sm:px-6 pb-8 flex flex-col items-center"
-        >
-          <div className="max-w-2xl w-full">
-            {/* Main Action Card */}
-            {!astroData && (
-              <motion.div
-                className="bg-gray-900/60 backdrop-blur-xl border border-gray-800 rounded-2xl p-8 shadow-2xl text-center"
-                initial={{ scale: 0.9, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ delay: 0.2 }}
-              >
+              {/* Zodiac Wheel Image */}
+              <div className="relative w-full aspect-[4/3] flex items-center justify-center pt-8">
                 <motion.div
-                  className="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center"
+                  className="relative w-56 h-56"
                   animate={{
-                    boxShadow: [
-                      '0 0 20px rgba(99, 102, 241, 0.5)',
-                      '0 0 40px rgba(139, 92, 246, 0.8)',
-                      '0 0 20px rgba(99, 102, 241, 0.5)',
-                    ],
+                    rotate: [0, 360],
                   }}
                   transition={{
-                    duration: 2,
+                    duration: 60,
                     repeat: Infinity,
-                    ease: "easeInOut",
+                    ease: "linear",
                   }}
                 >
-                  <MapPin className="w-12 h-12 text-white" />
+                  {/* Zodiac wheel SVG */}
+                  <svg
+                    viewBox="0 0 200 200"
+                    className="w-full h-full"
+                    style={{
+                      filter: 'drop-shadow(0 0 30px rgba(99, 102, 241, 0.6))'
+                    }}
+                  >
+                    {/* Outer circle */}
+                    <circle
+                      cx="100"
+                      cy="100"
+                      r="95"
+                      fill="none"
+                      stroke="rgba(167, 139, 250, 0.3)"
+                      strokeWidth="0.5"
+                    />
+                    
+                    {/* Inner circle */}
+                    <circle
+                      cx="100"
+                      cy="100"
+                      r="70"
+                      fill="none"
+                      stroke="rgba(167, 139, 250, 0.4)"
+                      strokeWidth="0.5"
+                    />
+                    
+                    {/* Center circle */}
+                    <circle
+                      cx="100"
+                      cy="100"
+                      r="25"
+                      fill="rgba(79, 70, 229, 0.2)"
+                      stroke="rgba(167, 139, 250, 0.5)"
+                      strokeWidth="0.5"
+                    />
+                    
+                    {/* 12 zodiac divisions */}
+                    {Array.from({ length: 12 }).map((_, i) => {
+                      const angle = (i * 30 - 90) * (Math.PI / 180);
+                      const x1 = 100 + 25 * Math.cos(angle);
+                      const y1 = 100 + 25 * Math.sin(angle);
+                      const x2 = 100 + 95 * Math.cos(angle);
+                      const y2 = 100 + 95 * Math.sin(angle);
+                      return (
+                        <line
+                          key={i}
+                          x1={x1}
+                          y1={y1}
+                          x2={x2}
+                          y2={y2}
+                          stroke="rgba(167, 139, 250, 0.3)"
+                          strokeWidth="0.5"
+                        />
+                      );
+                    })}
+                    
+                    {/* Zodiac symbols (simplified) */}
+                    {['♈', '♉', '♊', '♋', '♌', '♍', '♎', '♏', '♐', '♑', '♒', '♓'].map((symbol, i) => {
+                      const angle = (i * 30 - 90 + 15) * (Math.PI / 180);
+                      const x = 100 + 82 * Math.cos(angle);
+                      const y = 100 + 82 * Math.sin(angle);
+                      return (
+                        <text
+                          key={i}
+                          x={x}
+                          y={y}
+                          textAnchor="middle"
+                          dominantBaseline="middle"
+                          fill="rgba(199, 210, 254, 0.9)"
+                          fontSize="14"
+                          fontFamily="Arial"
+                        >
+                          {symbol}
+                        </text>
+                      );
+                    })}
+                    
+                    {/* Decorative inner lines */}
+                    {Array.from({ length: 12 }).map((_, i) => {
+                      const angle1 = (i * 30 - 90) * (Math.PI / 180);
+                      const angle2 = ((i + 6) * 30 - 90) * (Math.PI / 180);
+                      const x1 = 100 + 25 * Math.cos(angle1);
+                      const y1 = 100 + 25 * Math.sin(angle1);
+                      const x2 = 100 + 25 * Math.cos(angle2);
+                      const y2 = 100 + 25 * Math.sin(angle2);
+                      return (
+                        <line
+                          key={`inner-${i}`}
+                          x1={x1}
+                          y1={y1}
+                          x2={x2}
+                          y2={y2}
+                          stroke="rgba(167, 139, 250, 0.2)"
+                          strokeWidth="0.3"
+                        />
+                      );
+                    })}
+                  </svg>
                 </motion.div>
+              </div>
 
-                <h2 className="text-2xl font-semibold mb-3">Ready to Explore?</h2>
-                <p className="text-gray-400 mb-6">
-                  We'll use your location to provide personalized cosmic insights
-                </p>
+              {/* Text Content */}
+              <div className="px-8 pb-8 text-center">
+                <motion.h1
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 }}
+                  className="text-3xl font-bold mb-4 text-white"
+                >
+                  Daily Astro
+                </motion.h1>
+                
+                <motion.p
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 }}
+                  className="text-gray-300 text-base mb-8 leading-relaxed"
+                >
+                  Trace your daily path through the movements of the stars.
+                </motion.p>
 
                 {/* Action Button */}
                 <motion.button
                   onClick={handleDailyAstro}
                   disabled={loading}
-                  className="px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl font-semibold shadow-lg hover:shadow-indigo-500/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2 mx-auto"
-                  whileTap={{ scale: 0.95 }}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.5 }}
+                  className="w-full max-w-xs mx-auto px-8 py-4 bg-indigo-600 hover:bg-indigo-700 rounded-xl font-semibold text-white shadow-lg hover:shadow-indigo-500/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
+                  whileTap={{ scale: 0.98 }}
                 >
                   {loading ? (
                     <>
                       <Loader2 className="w-5 h-5 animate-spin" />
-                      <span>Fetching your stars...</span>
+                      <span>Loading...</span>
                     </>
                   ) : (
-                    <>
-                      <Sparkles className="w-5 h-5" />
-                      <span>Get Today's Astro</span>
-                    </>
+                    <span>Celestial Vibe Today</span>
                   )}
                 </motion.button>
+              </div>
+            </motion.div>
+          )}
+
+          {/* Error Message */}
+          <AnimatePresence>
+            {error && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                className="mt-4 p-4 bg-red-500/20 border border-red-500/50 rounded-xl text-red-300 text-sm flex items-start gap-3"
+              >
+                <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="font-medium mb-1">Location Error</p>
+                  <p className="text-red-200/80">{error}</p>
+                  <button
+                    onClick={() => window.Telegram?.WebApp?.openSettings()}
+                    className="mt-2 text-red-200 underline text-xs hover:text-white transition-colors"
+                  >
+                    Fix Location Permissions
+                  </button>
+                </div>
               </motion.div>
             )}
+          </AnimatePresence>
 
-            {/* Error Message */}
-            <AnimatePresence>
-              {error && (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95, y: -10 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  className="mt-4 p-4 bg-red-500/20 border border-red-500/50 rounded-xl text-red-300 text-sm flex items-start gap-3"
-                >
-                  <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <p className="font-medium mb-1">Location Error</p>
-                    <p className="text-red-200/80">{error}</p>
-                    <button
-                      onClick={() => window.Telegram?.WebApp?.openSettings()}
-                      className="mt-2 text-red-200 underline text-xs hover:text-white transition-colors"
-                    >
-                      Fix Location Permissions
-                    </button>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            {/* Results Card */}
-            <AnimatePresence>
-              {astroData && (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  className="bg-gradient-to-br from-indigo-900/40 to-purple-900/40 backdrop-blur-xl border border-indigo-500/30 rounded-2xl p-6 shadow-2xl"
-                >
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-2">
-                      <Sparkles className="w-6 h-6 text-indigo-400" />
-                      <h3 className="text-xl font-semibold">Your Cosmic Insights</h3>
-                    </div>
-                    <motion.button
-                      onClick={() => {
-                        setAstroData(null);
-                        setError(null);
-                      }}
-                      className="text-sm text-gray-400 hover:text-white transition-colors"
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      Refresh
-                    </motion.button>
-                  </div>
-                  
-                  <div className="prose prose-invert max-w-none">
-                    <pre className="whitespace-pre-wrap text-sm text-gray-200 leading-relaxed bg-black/20 p-4 rounded-lg">
-                      {typeof astroData === 'string' ? astroData : JSON.stringify(astroData, null, 2)}
-                    </pre>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-        </motion.div>
+          {/* Results Card */}
+          <AnimatePresence>
+            {astroData && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                className="bg-gradient-to-br from-indigo-900/40 to-purple-900/40 backdrop-blur-xl border border-indigo-500/30 rounded-2xl p-6 shadow-2xl"
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-xl font-semibold">Your Cosmic Insights</h3>
+                  <motion.button
+                    onClick={() => {
+                      setAstroData(null);
+                      setError(null);
+                    }}
+                    className="text-sm text-gray-400 hover:text-white transition-colors"
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    Refresh
+                  </motion.button>
+                </div>
+                
+                <div className="prose prose-invert max-w-none">
+                  <pre className="whitespace-pre-wrap text-sm text-gray-200 leading-relaxed bg-black/20 p-4 rounded-lg">
+                    {typeof astroData === 'string' ? astroData : JSON.stringify(astroData, null, 2)}
+                  </pre>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
     </div>
   );
