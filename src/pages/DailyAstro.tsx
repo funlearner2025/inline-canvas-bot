@@ -2,54 +2,72 @@
 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Loader2, Undo2, AlertCircle } from "lucide-react";
+import { Loader2, Undo2, AlertCircle, MapPin } from "lucide-react";
 
 export default function DailyAstro() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showLocationRequest, setShowLocationRequest] = useState(false);
 
-  // Request Daily Astro via Bot
-  async function handleDailyAstro() {
+  // Request location using browser geolocation
+  async function requestLocation() {
     setLoading(true);
     setError(null);
 
     try {
+      // Get location from browser
+      const coords = await new Promise<GeolocationCoordinates>((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => resolve(pos.coords),
+          (err) => reject(err),
+          { enableHighAccuracy: true, timeout: 10000 }
+        );
+      });
+
       // Get Telegram user ID
       const telegramUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
-      
-      if (!telegramUser?.id) {
-        setError("Unable to identify Telegram user. Please try again.");
-        return;
-      }
+      const userId = telegramUser?.id;
+      const username = telegramUser?.username || telegramUser?.first_name || "there";
 
-      // Call backend to trigger bot message with location request
-      const response = await fetch(`${import.meta.env.VITE_FLASK_API_URL}/request-daily-astro-location`, {
+      // Send location to backend
+      const response = await fetch(`${import.meta.env.VITE_FLASK_API_URL}/daily-astro`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
-          user_id: telegramUser.id,
-          username: telegramUser.username || telegramUser.first_name
+          lat: coords.latitude,
+          lon: coords.longitude,
+          chat_id: userId
         }),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to send request');
+        throw new Error('Failed to send location');
       }
 
-      // Close the Mini App
-      if (window.Telegram?.WebApp) {
-        // Use MainButton to show confirmation
-        alert('📍 Please check the bot chat to share your location!');
-        window.Telegram.WebApp.close();
-      }
+      // Success - show message
+      alert(`✅ Location sent! Check your Telegram chat with the bot for your Daily Astro reading.`);
+      setShowLocationRequest(false);
       
-    } catch (e) {
-      console.error('Request failed:', e);
-      setError('Failed to send request. Please try again or contact the bot directly.');
+    } catch (e: any) {
+      console.error('Location request failed:', e);
+      if (e.code === 1) {
+        setError('Location permission denied. Please enable location access in your browser settings.');
+      } else if (e.code === 2) {
+        setError('Location unavailable. Please check your device settings.');
+      } else if (e.code === 3) {
+        setError('Location request timeout. Please try again.');
+      } else {
+        setError('Failed to get location. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
+  }
+
+  // Handle button click - show location request UI
+  async function handleDailyAstro() {
+    setShowLocationRequest(true);
   }
 
   return (
@@ -88,32 +106,78 @@ export default function DailyAstro() {
         </button>
 
         <div className="w-full max-w-md flex flex-col items-center">
-          {/* Text Content */}
-          <div className="text-center px-4">
-            <h1 className="text-4xl font-bold mb-6 text-white">
-              Daily Astro
-            </h1>
-            
-            <p className="text-gray-200 text-lg mb-10 leading-relaxed max-w-md">
-              Trace your daily path through the movements of the stars.
-            </p>
+          {/* Initial View */}
+          {!showLocationRequest && (
+            <div className="text-center px-4">
+              <h1 className="text-4xl font-bold mb-6 text-white">
+                Daily Astro
+              </h1>
+              
+              <p className="text-gray-200 text-lg mb-10 leading-relaxed max-w-md">
+                Trace your daily path through the movements of the stars.
+              </p>
 
-            {/* Action Button */}
-            <button
-              onClick={handleDailyAstro}
-              disabled={loading}
-              className="px-12 py-4 bg-indigo-600 hover:bg-indigo-700 rounded-xl font-semibold text-white text-lg shadow-lg hover:shadow-indigo-500/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2 mx-auto"
-            >
-              {loading ? (
-                <>
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                  <span>Sending...</span>
-                </>
-              ) : (
+              <button
+                onClick={handleDailyAstro}
+                disabled={loading}
+                className="px-12 py-4 bg-indigo-600 hover:bg-indigo-700 rounded-xl font-semibold text-white text-lg shadow-lg hover:shadow-indigo-500/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2 mx-auto"
+              >
                 <span>Celestial Vibe Today</span>
-              )}
-            </button>
-          </div>
+              </button>
+            </div>
+          )}
+
+          {/* Location Request View */}
+          {showLocationRequest && (
+            <div className="text-center px-4 w-full">
+              <div className="mb-8">
+                <div className="w-20 h-20 bg-indigo-600/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <MapPin className="w-10 h-10 text-indigo-400" />
+                </div>
+                <h2 className="text-2xl font-bold mb-3 text-white">
+                  Share Your Location
+                </h2>
+                <p className="text-gray-300 text-base leading-relaxed max-w-sm mx-auto">
+                  We need your location to calculate your personalized Daily Astro reading based on your current position.
+                </p>
+              </div>
+
+              <div className="space-y-3">
+                <button
+                  onClick={requestLocation}
+                  disabled={loading}
+                  className="w-full px-8 py-4 bg-indigo-600 hover:bg-indigo-700 rounded-xl font-semibold text-white text-lg shadow-lg hover:shadow-indigo-500/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-3"
+                >
+                  {loading ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      <span>Getting Location...</span>
+                    </>
+                  ) : (
+                    <>
+                      <MapPin className="w-5 h-5" />
+                      <span>Share Location</span>
+                    </>
+                  )}
+                </button>
+
+                <button
+                  onClick={() => {
+                    setShowLocationRequest(false);
+                    setError(null);
+                  }}
+                  disabled={loading}
+                  className="w-full px-8 py-3 bg-gray-700/50 hover:bg-gray-700 rounded-xl font-medium text-gray-200 text-base transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Cancel
+                </button>
+              </div>
+
+              <p className="text-gray-400 text-xs mt-6 leading-relaxed max-w-sm mx-auto">
+                🔒 Your location is only used to generate your astro reading and is not stored.
+              </p>
+            </div>
+          )}
 
           {/* Error Message */}
           {error && (
