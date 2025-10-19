@@ -12,7 +12,7 @@ export default function DailyAstro() {
   const [debugLogs, setDebugLogs] = useState<string[]>([]);
   
   // Check if debug mode is enabled via environment variable
-  const isDebugMode = import.meta.env.VITE_DEBUG_MODE === 'true';
+  const isDebugMode = import.meta.env.VITE_DAILY_ASTRO_DEBUG_MODE === 'true';
 
   // Add debug log helper (only logs if debug mode is enabled)
   const addLog = (message: string) => {
