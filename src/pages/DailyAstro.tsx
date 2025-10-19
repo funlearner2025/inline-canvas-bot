@@ -28,6 +28,19 @@ export default function DailyAstro() {
     try {
       // Try Telegram Mini App location first
       addLog("Attempting Telegram location...");
+      
+      // Mount locationManager if not already mounted
+      if (locationManager.mount.isAvailable()) {
+        addLog("Mounting locationManager...");
+        locationManager.mount();
+      }
+      
+      // Check if location request is available
+      if (!locationManager.requestLocation.isAvailable()) {
+        addLog("Telegram location not available, using browser fallback");
+        throw new Error("Location manager not available");
+      }
+      
       const loc = await locationManager.requestLocation();
       addLog(`Telegram location success: ${loc.latitude}, ${loc.longitude}`);
       return { lat: loc.latitude, lon: loc.longitude };
