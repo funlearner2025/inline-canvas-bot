@@ -24,7 +24,7 @@ export default function DailyAstro() {
       }
 
       // Call backend to trigger bot message with location request
-      const response = await fetch(`${import.meta.env.VITE_FLASK_API_URL}/request-daily-astro`, {
+      const response = await fetch(`${import.meta.env.VITE_FLASK_API_URL}/request-daily-astro-location`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 

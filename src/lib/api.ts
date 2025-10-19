@@ -27,7 +27,7 @@ export type FutureDayPayload = {
  * Request daily astro via bot keyboard (triggers bot message with location button)
  */
 export async function requestDailyAstroViaBot(userId: number, username?: string) {
-  const res = await fetch(`${BASE_URL}/request-daily-astro`, {
+  const res = await fetch(`${BASE_URL}/request-daily-astro-location`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ user_id: userId, username }),
@@ -49,12 +49,12 @@ export async function requestDailyAstroViaBot(userId: number, username?: string)
 export async function postDailyAstro(lat: number, lon: number) {
   console.log("[API] postDailyAstro called with:", { lat, lon });
   console.log("[API] Backend URL:", BASE_URL);
-  console.log("[API] Full endpoint:", `${BASE_URL}/dailyastro`);
+  console.log("[API] Full endpoint:", `${BASE_URL}/daily-astro`);
   
   const payload = { lat, lon };
   console.log("[API] Sending payload:", payload);
   
-  const res = await fetch(`${BASE_URL}/dailyastro`, {
+  const res = await fetch(`${BASE_URL}/daily-astro`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
