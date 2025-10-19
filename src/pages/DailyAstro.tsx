@@ -10,11 +10,16 @@ export default function DailyAstro() {
   const [error, setError] = useState<string | null>(null);
   const [showLocationRequest, setShowLocationRequest] = useState(false);
   const [debugLogs, setDebugLogs] = useState<string[]>([]);
+  
+  // Check if debug mode is enabled via environment variable
+  const isDebugMode = import.meta.env.VITE_DEBUG_MODE === 'true';
 
-  // Add debug log helper
+  // Add debug log helper (only logs if debug mode is enabled)
   const addLog = (message: string) => {
     console.log(message);
-    setDebugLogs(prev => [...prev, `${new Date().toLocaleTimeString()}: ${message}`]);
+    if (isDebugMode) {
+      setDebugLogs(prev => [...prev, `${new Date().toLocaleTimeString()}: ${message}`]);
+    }
   };
 
   // Request location using browser geolocation
@@ -218,8 +223,8 @@ export default function DailyAstro() {
             </div>
           )}
 
-          {/* Debug Logs Panel */}
-          {debugLogs.length > 0 && (
+          {/* Debug Logs Panel - Only show if debug mode is enabled */}
+          {isDebugMode && debugLogs.length > 0 && (
             <div className="mt-6 bg-black/60 backdrop-blur-sm border border-gray-700 rounded-xl p-4 max-h-60 overflow-y-auto w-full">
               <div className="flex items-center justify-between mb-2">
                 <h4 className="text-xs font-semibold text-gray-400 uppercase">Debug Logs</h4>
