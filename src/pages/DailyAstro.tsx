@@ -11,24 +11,32 @@ export default function DailyAstro() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [astroData, setAstroData] = useState<any | null>(null);
+  const [debugLogs, setDebugLogs] = useState<string[]>([]);
+
+  // Add debug log helper
+  const addLog = (message: string) => {
+    console.log(message);
+    setDebugLogs(prev => [...prev, `${new Date().toLocaleTimeString()}: ${message}`]);
+  };
 
   // Get user location (Telegram first, browser fallback)
   async function getLocation() {
     setError(null);
     setLoading(true);
+    addLog("Starting location fetch...");
 
     try {
       // Try Telegram Mini App location first
-      console.log("[DailyAstro] Attempting to get Telegram location...");
+      addLog("Attempting Telegram location...");
       const loc = await locationManager.requestLocation();
-      console.log("[DailyAstro] Telegram location received:", { lat: loc.latitude, lon: loc.longitude });
+      addLog(`Telegram location success: ${loc.latitude}, ${loc.longitude}`);
       return { lat: loc.latitude, lon: loc.longitude };
     } catch (e) {
-      console.warn("[DailyAstro] Telegram location failed:", e);
+      addLog(`Telegram location failed: ${e}`);
 
       // Fallback to browser geolocation
       try {
-        console.log("[DailyAstro] Falling back to browser geolocation...");
+        addLog("Trying browser geolocation...");
         const coords = await new Promise<GeolocationCoordinates>((resolve, reject) => {
           navigator.geolocation.getCurrentPosition(
             (pos) => resolve(pos.coords),
@@ -36,10 +44,10 @@ export default function DailyAstro() {
             { enableHighAccuracy: true, timeout: 8000 }
           );
         });
-        console.log("[DailyAstro] Browser geolocation received:", { lat: coords.latitude, lon: coords.longitude });
+        addLog(`Browser location success: ${coords.latitude}, ${coords.longitude}`);
         return { lat: coords.latitude, lon: coords.longitude };
       } catch (geoErr) {
-        console.error("[DailyAstro] Browser geolocation failed:", geoErr);
+        addLog(`Browser geolocation failed: ${geoErr}`);
         setError("Unable to get location. Please enable location in Telegram or browser.");
         return null;
       }
@@ -50,25 +58,26 @@ export default function DailyAstro() {
 
   // Handle click — get location and call backend
   async function handleDailyAstro() {
-    console.log("[DailyAstro] Button clicked, starting process...");
+    addLog("Button clicked!");
     const coords = await getLocation();
     
     if (!coords) {
-      console.error("[DailyAstro] No coordinates received, aborting.");
+      addLog("No coordinates received, aborting.");
       return;
     }
 
-    console.log("[DailyAstro] Sending coordinates to backend:", coords);
+    addLog(`Sending to backend: lat=${coords.lat}, lon=${coords.lon}`);
+    addLog(`Backend URL: ${import.meta.env.VITE_FLASK_API_URL || 'UNDEFINED'}`);
     
     try {
       setLoading(true);
       const data = await postDailyAstro(coords.lat, coords.lon);
-      console.log("[DailyAstro] Backend response received:", data);
+      addLog(`Backend response received!`);
       
       // Show success message from backend
       setAstroData(data.message || "Location sent successfully! Check your Telegram for the astro reading.");
     } catch (e) {
-      console.error("[DailyAstro] Backend fetch failed:", e);
+      addLog(`Backend error: ${e}`);
       setError("Failed to send location to backend. Please try again later.");
     } finally {
       setLoading(false);
@@ -169,6 +178,7 @@ export default function DailyAstro() {
                   onClick={() => {
                     setAstroData(null);
                     setError(null);
+                    setDebugLogs([]);
                   }}
                   className="text-sm text-gray-400 hover:text-white transition-colors"
                 >
@@ -180,6 +190,28 @@ export default function DailyAstro() {
                 <pre className="whitespace-pre-wrap text-sm text-gray-200 leading-relaxed bg-black/20 p-4 rounded-lg">
                   {typeof astroData === 'string' ? astroData : JSON.stringify(astroData, null, 2)}
                 </pre>
+              </div>
+            </div>
+          )}
+
+          {/* Debug Logs Panel */}
+          {debugLogs.length > 0 && (
+            <div className="mt-4 bg-black/60 backdrop-blur-sm border border-gray-700 rounded-xl p-4 max-h-60 overflow-y-auto">
+              <div className="flex items-center justify-between mb-2">
+                <h4 className="text-xs font-semibold text-gray-400 uppercase">Debug Logs</h4>
+                <button
+                  onClick={() => setDebugLogs([])}
+                  className="text-xs text-gray-500 hover:text-white"
+                >
+                  Clear
+                </button>
+              </div>
+              <div className="space-y-1">
+                {debugLogs.map((log, idx) => (
+                  <div key={idx} className="text-xs text-gray-300 font-mono">
+                    {log}
+                  </div>
+                ))}
               </div>
             </div>
           )}
