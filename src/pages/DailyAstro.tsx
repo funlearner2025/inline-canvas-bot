@@ -9,14 +9,23 @@ export default function DailyAstro() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showLocationRequest, setShowLocationRequest] = useState(false);
+  const [debugLogs, setDebugLogs] = useState<string[]>([]);
+
+  // Add debug log helper
+  const addLog = (message: string) => {
+    console.log(message);
+    setDebugLogs(prev => [...prev, `${new Date().toLocaleTimeString()}: ${message}`]);
+  };
 
   // Request location using browser geolocation
   async function requestLocation() {
     setLoading(true);
     setError(null);
+    addLog("Starting location request...");
 
     try {
       // Get location from browser
+      addLog("Requesting browser geolocation...");
       const coords = await new Promise<GeolocationCoordinates>((resolve, reject) => {
         navigator.geolocation.getCurrentPosition(
           (pos) => resolve(pos.coords),
@@ -25,25 +34,41 @@ export default function DailyAstro() {
         );
       });
 
+      addLog(`Location received: ${coords.latitude}, ${coords.longitude}`);
+
       // Get Telegram user ID
       const telegramUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
       const userId = telegramUser?.id;
       const username = telegramUser?.username || telegramUser?.first_name || "there";
+      
+      addLog(`Telegram user: ${username} (ID: ${userId || 'not available'})`);
+      addLog(`Backend URL: ${import.meta.env.VITE_FLASK_API_URL}`);
 
       // Send location to backend
+      const payload = {
+        lat: coords.latitude,
+        lon: coords.longitude,
+        chat_id: userId
+      };
+      
+      addLog(`Sending payload: ${JSON.stringify(payload)}`);
+      
       const response = await fetch(`${import.meta.env.VITE_FLASK_API_URL}/daily-astro`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          lat: coords.latitude,
-          lon: coords.longitude,
-          chat_id: userId
-        }),
+        body: JSON.stringify(payload),
       });
 
+      addLog(`Response status: ${response.status} ${response.statusText}`);
+
       if (!response.ok) {
-        throw new Error('Failed to send location');
+        const errorText = await response.text();
+        addLog(`Error response: ${errorText}`);
+        throw new Error(`Backend error: ${response.status}`);
       }
+
+      const result = await response.json();
+      addLog(`Success response: ${JSON.stringify(result)}`);
 
       // Success - show message
       alert(`✅ Location sent! Check your Telegram chat with the bot for your Daily Astro reading.`);
@@ -51,6 +76,8 @@ export default function DailyAstro() {
       
     } catch (e: any) {
       console.error('Location request failed:', e);
+      addLog(`ERROR: ${e.message || e}`);
+      
       if (e.code === 1) {
         setError('Location permission denied. Please enable location access in your browser settings.');
       } else if (e.code === 2) {
@@ -58,7 +85,7 @@ export default function DailyAstro() {
       } else if (e.code === 3) {
         setError('Location request timeout. Please try again.');
       } else {
-        setError('Failed to get location. Please try again.');
+        setError(`Failed: ${e.message || 'Please try again.'}`);
       }
     } finally {
       setLoading(false);
@@ -67,6 +94,7 @@ export default function DailyAstro() {
 
   // Handle button click - show location request UI
   async function handleDailyAstro() {
+    addLog("Celestial Vibe Today clicked!");
     setShowLocationRequest(true);
   }
 
@@ -186,6 +214,28 @@ export default function DailyAstro() {
               <div>
                 <p className="font-medium mb-1">Error</p>
                 <p className="text-red-200/80">{error}</p>
+              </div>
+            </div>
+          )}
+
+          {/* Debug Logs Panel */}
+          {debugLogs.length > 0 && (
+            <div className="mt-6 bg-black/60 backdrop-blur-sm border border-gray-700 rounded-xl p-4 max-h-60 overflow-y-auto w-full">
+              <div className="flex items-center justify-between mb-2">
+                <h4 className="text-xs font-semibold text-gray-400 uppercase">Debug Logs</h4>
+                <button
+                  onClick={() => setDebugLogs([])}
+                  className="text-xs text-gray-500 hover:text-white"
+                >
+                  Clear
+                </button>
+              </div>
+              <div className="space-y-1">
+                {debugLogs.map((log, idx) => (
+                  <div key={idx} className="text-xs text-gray-300 font-mono break-all">
+                    {log}
+                  </div>
+                ))}
               </div>
             </div>
           )}
