@@ -7,7 +7,6 @@ import { TelegramThemeProvider } from "@/components/TelegramThemeProvider";
 
 import Index from "./pages/Index";
 import DailyAstro from "./pages/DailyAstro";
-import DailyPanchangam from "./pages/DailyPanchangam";
 import FutureMonth from "./pages/FutureMonth";
 import FutureDay from "./pages/FutureDay";
 import NotFound from "./pages/NotFound";
@@ -39,7 +38,6 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/dailyastro" element={<DailyAstro />} />
-          <Route path="/panchangam" element={<DailyPanchangam />} />
           <Route path="/futuremonth" element={<FutureMonth />} />
           <Route path="/futureday" element={<FutureDay />} />
           <Route path="*" element={<Navigate to="/" replace />} />
