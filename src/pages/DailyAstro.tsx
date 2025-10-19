@@ -19,13 +19,16 @@ export default function DailyAstro() {
 
     try {
       // Try Telegram Mini App location first
+      console.log("[DailyAstro] Attempting to get Telegram location...");
       const loc = await locationManager.requestLocation();
+      console.log("[DailyAstro] Telegram location received:", { lat: loc.latitude, lon: loc.longitude });
       return { lat: loc.latitude, lon: loc.longitude };
     } catch (e) {
-      console.warn("Telegram location failed:", e);
+      console.warn("[DailyAstro] Telegram location failed:", e);
 
       // Fallback to browser geolocation
       try {
+        console.log("[DailyAstro] Falling back to browser geolocation...");
         const coords = await new Promise<GeolocationCoordinates>((resolve, reject) => {
           navigator.geolocation.getCurrentPosition(
             (pos) => resolve(pos.coords),
@@ -33,9 +36,10 @@ export default function DailyAstro() {
             { enableHighAccuracy: true, timeout: 8000 }
           );
         });
+        console.log("[DailyAstro] Browser geolocation received:", { lat: coords.latitude, lon: coords.longitude });
         return { lat: coords.latitude, lon: coords.longitude };
       } catch (geoErr) {
-        console.error("Browser geolocation failed:", geoErr);
+        console.error("[DailyAstro] Browser geolocation failed:", geoErr);
         setError("Unable to get location. Please enable location in Telegram or browser.");
         return null;
       }
@@ -46,16 +50,26 @@ export default function DailyAstro() {
 
   // Handle click — get location and call backend
   async function handleDailyAstro() {
+    console.log("[DailyAstro] Button clicked, starting process...");
     const coords = await getLocation();
-    if (!coords) return;
+    
+    if (!coords) {
+      console.error("[DailyAstro] No coordinates received, aborting.");
+      return;
+    }
 
+    console.log("[DailyAstro] Sending coordinates to backend:", coords);
+    
     try {
       setLoading(true);
       const data = await postDailyAstro(coords.lat, coords.lon);
-      setAstroData(data);
+      console.log("[DailyAstro] Backend response received:", data);
+      
+      // Show success message from backend
+      setAstroData(data.message || "Location sent successfully! Check your Telegram for the astro reading.");
     } catch (e) {
-      console.error("Daily Astro fetch failed:", e);
-      setError("Failed to fetch daily astro data. Please try again later.");
+      console.error("[DailyAstro] Backend fetch failed:", e);
+      setError("Failed to send location to backend. Please try again later.");
     } finally {
       setLoading(false);
     }

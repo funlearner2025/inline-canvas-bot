@@ -28,18 +28,29 @@ export type FutureDayPayload = {
  * for Celestial Vibe Today (Daily Astro).
  */
 export async function postDailyAstro(lat: number, lon: number) {
+  console.log("[API] postDailyAstro called with:", { lat, lon });
+  console.log("[API] Backend URL:", BASE_URL);
+  console.log("[API] Full endpoint:", `${BASE_URL}/dailyastro`);
+  
+  const payload = { lat, lon };
+  console.log("[API] Sending payload:", payload);
+  
   const res = await fetch(`${BASE_URL}/dailyastro`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ lat, lon }),
+    body: JSON.stringify(payload),
   });
 
+  console.log("[API] Response status:", res.status, res.statusText);
+  
   if (!res.ok) {
     const errorText = await res.text();
+    console.error("[API] Error response:", errorText);
     throw new Error(`Daily Astro failed: ${res.status} - ${errorText}`);
   }
 
   const result = await res.json();
+  console.log("[API] Success response:", result);
   return result;
 }
 
