@@ -2,96 +2,51 @@
 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { locationManager } from "@telegram-apps/sdk";
-import { postDailyAstro } from "../lib/api";
 import { Loader2, Undo2, AlertCircle } from "lucide-react";
 
 export default function DailyAstro() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [astroData, setAstroData] = useState<any | null>(null);
-  const [debugLogs, setDebugLogs] = useState<string[]>([]);
 
-  // Add debug log helper
-  const addLog = (message: string) => {
-    console.log(message);
-    setDebugLogs(prev => [...prev, `${new Date().toLocaleTimeString()}: ${message}`]);
-  };
-
-  // Get user location (Telegram first, browser fallback)
-  async function getLocation() {
-    setError(null);
-    setLoading(true);
-    addLog("Starting location fetch...");
-
-    try {
-      // Try Telegram Mini App location first
-      addLog("Attempting Telegram location...");
-      
-      // Mount locationManager if not already mounted
-      if (locationManager.mount.isAvailable()) {
-        addLog("Mounting locationManager...");
-        locationManager.mount();
-      }
-      
-      // Check if location request is available
-      if (!locationManager.requestLocation.isAvailable()) {
-        addLog("Telegram location not available, using browser fallback");
-        throw new Error("Location manager not available");
-      }
-      
-      const loc = await locationManager.requestLocation();
-      addLog(`Telegram location success: ${loc.latitude}, ${loc.longitude}`);
-      return { lat: loc.latitude, lon: loc.longitude };
-    } catch (e) {
-      addLog(`Telegram location failed: ${e}`);
-
-      // Fallback to browser geolocation
-      try {
-        addLog("Trying browser geolocation...");
-        const coords = await new Promise<GeolocationCoordinates>((resolve, reject) => {
-          navigator.geolocation.getCurrentPosition(
-            (pos) => resolve(pos.coords),
-            (err) => reject(err),
-            { enableHighAccuracy: true, timeout: 8000 }
-          );
-        });
-        addLog(`Browser location success: ${coords.latitude}, ${coords.longitude}`);
-        return { lat: coords.latitude, lon: coords.longitude };
-      } catch (geoErr) {
-        addLog(`Browser geolocation failed: ${geoErr}`);
-        setError("Unable to get location. Please enable location in Telegram or browser.");
-        return null;
-      }
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  // Handle click — get location and call backend
+  // Request Daily Astro via Bot
   async function handleDailyAstro() {
-    addLog("Button clicked!");
-    const coords = await getLocation();
-    
-    if (!coords) {
-      addLog("No coordinates received, aborting.");
-      return;
-    }
+    setLoading(true);
+    setError(null);
 
-    addLog(`Sending to backend: lat=${coords.lat}, lon=${coords.lon}`);
-    addLog(`Backend URL: ${import.meta.env.VITE_FLASK_API_URL || 'UNDEFINED'}`);
-    
     try {
-      setLoading(true);
-      const data = await postDailyAstro(coords.lat, coords.lon);
-      addLog(`Backend response received!`);
+      // Get Telegram user ID
+      const telegramUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
       
-      // Show success message from backend
-      setAstroData(data.message || "Location sent successfully! Check your Telegram for the astro reading.");
+      if (!telegramUser?.id) {
+        setError("Unable to identify Telegram user. Please try again.");
+        return;
+      }
+
+      // Call backend to trigger bot message with location request
+      const response = await fetch(`${import.meta.env.VITE_FLASK_API_URL}/request-daily-astro`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          user_id: telegramUser.id,
+          username: telegramUser.username || telegramUser.first_name
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to send request');
+      }
+
+      // Close the Mini App
+      if (window.Telegram?.WebApp) {
+        // Use MainButton to show confirmation
+        alert('📍 Please check the bot chat to share your location!');
+        window.Telegram.WebApp.close();
+      }
+      
     } catch (e) {
-      addLog(`Backend error: ${e}`);
-      setError("Failed to send location to backend. Please try again later.");
+      console.error('Request failed:', e);
+      setError('Failed to send request. Please try again or contact the bot directly.');
     } finally {
       setLoading(false);
     }
@@ -133,98 +88,40 @@ export default function DailyAstro() {
         </button>
 
         <div className="w-full max-w-md flex flex-col items-center">
-          {/* Content without zodiac wheel */}
-          {!astroData && (
-            <>
-              {/* Text Content */}
-              <div className="text-center px-4">
-                <h1 className="text-4xl font-bold mb-6 text-white">
-                  Daily Astro
-                </h1>
-                
-                <p className="text-gray-200 text-lg mb-10 leading-relaxed max-w-md">
-                  Trace your daily path through the movements of the stars.
-                </p>
+          {/* Text Content */}
+          <div className="text-center px-4">
+            <h1 className="text-4xl font-bold mb-6 text-white">
+              Daily Astro
+            </h1>
+            
+            <p className="text-gray-200 text-lg mb-10 leading-relaxed max-w-md">
+              Trace your daily path through the movements of the stars.
+            </p>
 
-                {/* Action Button */}
-                <button
-                  onClick={handleDailyAstro}
-                  disabled={loading}
-                  className="px-12 py-4 bg-indigo-600 hover:bg-indigo-700 rounded-xl font-semibold text-white text-lg shadow-lg hover:shadow-indigo-500/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2 mx-auto"
-                >
-                  {loading ? (
-                    <>
-                      <Loader2 className="w-5 h-5 animate-spin" />
-                      <span>Loading...</span>
-                    </>
-                  ) : (
-                    <span>Celestial Vibe Today</span>
-                  )}
-                </button>
-              </div>
-            </>
-          )}
+            {/* Action Button */}
+            <button
+              onClick={handleDailyAstro}
+              disabled={loading}
+              className="px-12 py-4 bg-indigo-600 hover:bg-indigo-700 rounded-xl font-semibold text-white text-lg shadow-lg hover:shadow-indigo-500/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2 mx-auto"
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  <span>Sending...</span>
+                </>
+              ) : (
+                <span>Celestial Vibe Today</span>
+              )}
+            </button>
+          </div>
 
           {/* Error Message */}
           {error && (
-            <div className="mt-4 p-4 bg-red-500/20 border border-red-500/50 rounded-xl text-red-300 text-sm flex items-start gap-3">
+            <div className="mt-6 p-4 bg-red-500/20 border border-red-500/50 rounded-xl text-red-300 text-sm flex items-start gap-3 max-w-md">
               <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
               <div>
-                <p className="font-medium mb-1">Location Error</p>
+                <p className="font-medium mb-1">Error</p>
                 <p className="text-red-200/80">{error}</p>
-                <button
-                  onClick={() => window.Telegram?.WebApp?.openSettings()}
-                  className="mt-2 text-red-200 underline text-xs hover:text-white transition-colors"
-                >
-                  Fix Location Permissions
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* Results Card */}
-          {astroData && (
-            <div className="bg-gradient-to-br from-indigo-900/40 to-purple-900/40 backdrop-blur-xl border border-indigo-500/30 rounded-2xl p-6 shadow-2xl">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-xl font-semibold">Your Cosmic Insights</h3>
-                <button
-                  onClick={() => {
-                    setAstroData(null);
-                    setError(null);
-                    setDebugLogs([]);
-                  }}
-                  className="text-sm text-gray-400 hover:text-white transition-colors"
-                >
-                  Refresh
-                </button>
-              </div>
-              
-              <div className="prose prose-invert max-w-none">
-                <pre className="whitespace-pre-wrap text-sm text-gray-200 leading-relaxed bg-black/20 p-4 rounded-lg">
-                  {typeof astroData === 'string' ? astroData : JSON.stringify(astroData, null, 2)}
-                </pre>
-              </div>
-            </div>
-          )}
-
-          {/* Debug Logs Panel */}
-          {debugLogs.length > 0 && (
-            <div className="mt-4 bg-black/60 backdrop-blur-sm border border-gray-700 rounded-xl p-4 max-h-60 overflow-y-auto">
-              <div className="flex items-center justify-between mb-2">
-                <h4 className="text-xs font-semibold text-gray-400 uppercase">Debug Logs</h4>
-                <button
-                  onClick={() => setDebugLogs([])}
-                  className="text-xs text-gray-500 hover:text-white"
-                >
-                  Clear
-                </button>
-              </div>
-              <div className="space-y-1">
-                {debugLogs.map((log, idx) => (
-                  <div key={idx} className="text-xs text-gray-300 font-mono">
-                    {log}
-                  </div>
-                ))}
               </div>
             </div>
           )}

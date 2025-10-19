@@ -24,6 +24,25 @@ export type FutureDayPayload = {
 };
 
 /**
+ * Request daily astro via bot keyboard (triggers bot message with location button)
+ */
+export async function requestDailyAstroViaBot(userId: number, username?: string) {
+  const res = await fetch(`${BASE_URL}/request-daily-astro`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ user_id: userId, username }),
+  });
+
+  if (!res.ok) {
+    const errorText = await res.text();
+    throw new Error(`Request failed: ${res.status} - ${errorText}`);
+  }
+
+  const result = await res.json();
+  return result;
+}
+
+/**
  * Sends user location to Flask backend (/dailyastro)
  * for Celestial Vibe Today (Daily Astro).
  */
