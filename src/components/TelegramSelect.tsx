@@ -1,5 +1,5 @@
 // src/components/TelegramSelect.tsx
-import { SelectHTMLAttributes, forwardRef, useRef } from 'react';
+import { SelectHTMLAttributes, forwardRef } from 'react';
 import { cn } from '@/lib/utils';
 
 interface TelegramSelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
@@ -12,43 +12,19 @@ interface TelegramSelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
  */
 export const TelegramSelect = forwardRef<HTMLSelectElement, TelegramSelectProps>(
   ({ className, icon, children, ...props }, ref) => {
-    const selectRef = useRef<HTMLSelectElement>(null);
-    
-    const handleClick = (e: React.MouseEvent<HTMLSelectElement>) => {
-      e.stopPropagation();
-      // Ensure the select gets focus and opens
-      const target = e.currentTarget;
-      setTimeout(() => {
-        target.focus();
-        // Trigger the select to open by simulating a mousedown
-        const event = new MouseEvent('mousedown', {
-          bubbles: true,
-          cancelable: true,
-          view: window
-        });
-        target.dispatchEvent(event);
-      }, 0);
-    };
-
     return (
-      <div 
-        className="relative w-full" 
-        style={{ 
-          WebkitTapHighlightColor: 'transparent',
-          isolation: 'isolate', // Create new stacking context
-        }}
-      >
+      <div className="relative w-full">
         {icon && (
           <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--tg-hint-color,#999)] pointer-events-none z-10">
             {icon}
           </div>
         )}
         <select
-          ref={ref || selectRef}
+          ref={ref}
           className={cn(
-            // Base Telegram-style select
+            // Base select styling
             "w-full px-4 py-3 rounded-xl font-sans text-base cursor-pointer",
-            // Use Telegram theme colors
+            // Telegram theme colors
             "bg-[var(--tg-secondary-bg-color,rgba(255,255,255,0.08))]",
             "text-[var(--tg-text-color,#fff)]",
             "border border-[var(--tg-hint-color,rgba(255,255,255,0.1))]",
@@ -58,21 +34,8 @@ export const TelegramSelect = forwardRef<HTMLSelectElement, TelegramSelectProps>
             icon && "pl-11",
             // Dropdown arrow spacing
             "pr-10",
-            // Ensure proper layering
-            "relative z-20",
             className
           )}
-          style={{
-            WebkitAppearance: 'none',
-            MozAppearance: 'none',
-            appearance: 'none',
-          }}
-          onClick={handleClick}
-          onTouchEnd={(e) => {
-            e.stopPropagation();
-            e.preventDefault();
-            handleClick(e as any);
-          }}
           {...props}
         >
           {children}
