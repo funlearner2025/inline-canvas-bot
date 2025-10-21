@@ -104,42 +104,45 @@ export default function FutureMonth() {
                   />
                 </div>
 
-                {/* Month Selector - Telegram UI style */}
-                <div>
-                  <label className="block text-sm font-medium text-[var(--tg-hint-color,#999)] mb-2">
-                    Month
-                  </label>
-                  <TelegramSelect
-                    value={month}
-                    onChange={(e) => setMonth(Number(e.target.value))}
-                    icon={<Calendar className="w-5 h-5" />}
-                  >
-                    {months.map((m, idx) => (
-                      <option key={idx} value={idx + 1}>
-                        {m}
-                      </option>
-                    ))}
-                  </TelegramSelect>
-                </div>
-
-                {/* Year Selector - Telegram UI style */}
-                <div>
-                  <label className="block text-sm font-medium text-[var(--tg-hint-color,#999)] mb-2">
-                    Year
-                  </label>
-                  <TelegramSelect
-                    value={year}
-                    onChange={(e) => setYear(Number(e.target.value))}
-                  >
-                    {[...Array(10)].map((_, idx) => {
-                      const y = new Date().getFullYear() + idx;
-                      return (
-                        <option key={y} value={y}>
-                          {y}
+                {/* Month and Year Selector - Same Row */}
+                <div className="grid grid-cols-2 gap-4">
+                  {/* Month Selector */}
+                  <div>
+                    <label className="block text-sm font-medium text-[var(--tg-hint-color,#999)] mb-2">
+                      Month
+                    </label>
+                    <TelegramSelect
+                      value={month}
+                      onChange={(e) => setMonth(Number(e.target.value))}
+                      icon={<Calendar className="w-5 h-5" />}
+                    >
+                      {months.map((m, idx) => (
+                        <option key={idx} value={idx + 1}>
+                          {m}
                         </option>
-                      );
-                    })}
-                  </TelegramSelect>
+                      ))}
+                    </TelegramSelect>
+                  </div>
+
+                  {/* Year Selector */}
+                  <div>
+                    <label className="block text-sm font-medium text-[var(--tg-hint-color,#999)] mb-2">
+                      Year
+                    </label>
+                    <TelegramSelect
+                      value={year}
+                      onChange={(e) => setYear(Number(e.target.value))}
+                    >
+                      {[...Array(151)].map((_, idx) => {
+                        const y = 1950 + idx;
+                        return (
+                          <option key={y} value={y}>
+                            {y}
+                          </option>
+                        );
+                      })}
+                    </TelegramSelect>
+                  </div>
                 </div>
 
                 {/* Submit Button - Telegram UI style with Tailwind enhancements */}
