@@ -51,6 +51,11 @@ export const TelegramSelect = forwardRef<HTMLSelectElement, TelegramSelectProps>
             WebkitTapHighlightColor: 'transparent',
             WebkitAppearance: 'none',
             MozAppearance: 'none',
+            touchAction: 'manipulation', // Prevent touch delays
+          }}
+          onTouchStart={(e) => {
+            // Prevent any parent touch handlers from interfering
+            e.stopPropagation();
           }}
           {...props}
         >
