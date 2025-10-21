@@ -237,7 +237,7 @@ export default function DailyAstro() {
               </div>
               <div className="space-y-1 max-h-64 overflow-y-auto">
                 {debugLogs.map((log, idx) => (
-                  <div key={idx} className="text-xs font-mono text-yellow-100 bg-black/30 p-2 rounded">
+                  <div key={idx} className="text-xs font-mono text-yellow-100 bg-black/30 p-2 rounded break-words overflow-wrap-anywhere">
                     {log}
                   </div>
                 ))}
