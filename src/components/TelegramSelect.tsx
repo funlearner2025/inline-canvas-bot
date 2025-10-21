@@ -1,5 +1,5 @@
 // src/components/TelegramSelect.tsx
-import { SelectHTMLAttributes, forwardRef } from 'react';
+import { SelectHTMLAttributes, forwardRef, useRef } from 'react';
 import { cn } from '@/lib/utils';
 
 interface TelegramSelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
@@ -12,13 +12,30 @@ interface TelegramSelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
  */
 export const TelegramSelect = forwardRef<HTMLSelectElement, TelegramSelectProps>(
   ({ className, icon, children, ...props }, ref) => {
+    const selectRef = useRef<HTMLSelectElement>(null);
+    
+    const handleClick = (e: React.MouseEvent<HTMLSelectElement>) => {
+      e.stopPropagation();
+      // Ensure the select gets focus and opens
+      const target = e.currentTarget;
+      setTimeout(() => {
+        target.focus();
+        // Trigger the select to open by simulating a mousedown
+        const event = new MouseEvent('mousedown', {
+          bubbles: true,
+          cancelable: true,
+          view: window
+        });
+        target.dispatchEvent(event);
+      }, 0);
+    };
+
     return (
       <div 
         className="relative w-full" 
         style={{ 
           WebkitTapHighlightColor: 'transparent',
-          transform: 'translateZ(0)', // Force GPU acceleration
-          willChange: 'transform', // Optimize for changes
+          isolation: 'isolate', // Create new stacking context
         }}
       >
         {icon && (
@@ -27,35 +44,34 @@ export const TelegramSelect = forwardRef<HTMLSelectElement, TelegramSelectProps>
           </div>
         )}
         <select
-          ref={ref}
+          ref={ref || selectRef}
           className={cn(
             // Base Telegram-style select
-            "w-full px-4 py-3 rounded-xl font-sans text-base appearance-none cursor-pointer",
+            "w-full px-4 py-3 rounded-xl font-sans text-base cursor-pointer",
             // Use Telegram theme colors
             "bg-[var(--tg-secondary-bg-color,rgba(255,255,255,0.08))]",
             "text-[var(--tg-text-color,#fff)]",
             "border border-[var(--tg-hint-color,rgba(255,255,255,0.1))]",
             // Focus states
             "focus:outline-none focus:ring-2 focus:ring-[var(--tg-link-color,#8774e1)] focus:border-transparent",
-            // Smooth transitions
-            "transition-all duration-200",
             // Icon spacing
             icon && "pl-11",
             // Dropdown arrow spacing
             "pr-10",
-            // Ensure proper touch handling and z-index
-            "touch-manipulation relative z-20",
+            // Ensure proper layering
+            "relative z-20",
             className
           )}
           style={{
-            WebkitTapHighlightColor: 'transparent',
             WebkitAppearance: 'none',
             MozAppearance: 'none',
-            touchAction: 'manipulation', // Prevent touch delays
+            appearance: 'none',
           }}
-          onTouchStart={(e) => {
-            // Prevent any parent touch handlers from interfering
+          onClick={handleClick}
+          onTouchEnd={(e) => {
             e.stopPropagation();
+            e.preventDefault();
+            handleClick(e as any);
           }}
           {...props}
         >
