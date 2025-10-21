@@ -17,6 +17,18 @@ export default function FutureDay() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [prediction, setPrediction] = useState<string | null>(null);
+  const [debugLogs, setDebugLogs] = useState<string[]>([]);
+
+  // Check if debug mode is enabled via environment variable
+  const isDebugMode = import.meta.env.VITE_FUTURE_DAY_DEBUG_MODE === 'true';
+
+  // Add log to debug panel
+  const addLog = (message: string) => {
+    if (isDebugMode) {
+      const timestamp = new Date().toLocaleTimeString();
+      setDebugLogs(prev => [...prev, `[${timestamp}] ${message}`]);
+    }
+  };
 
   const months = [
     'January', 'February', 'March', 'April', 'May', 'June',
@@ -29,20 +41,29 @@ export default function FutureDay() {
   const handleSubmit = async () => {
     if (!location) {
       setError('Please select a location');
+      addLog('❌ No location selected');
       return;
     }
 
     setError(null);
     setLoading(true);
+    addLog('🚀 Starting Future Day request...');
+    addLog(`📍 Location: ${location}`);
+    addLog(`📅 Date: ${months[month - 1]} ${day}, ${year}`);
 
     try {
+      addLog(`🌐 Calling API: ${import.meta.env.VITE_FLASK_API_URL}/future-day`);
       const data = await postFutureDay({ location, day, month, year });
+      addLog('✅ API Response received');
+      addLog(`📦 Response data: ${JSON.stringify(data).substring(0, 100)}...`);
       setPrediction(data?.message || JSON.stringify(data, null, 2));
     } catch (err) {
       console.error('Future Day fetch failed:', err);
+      addLog(`❌ Error: ${err instanceof Error ? err.message : String(err)}`);
       setError('Failed to fetch future day data. Please try again.');
     } finally {
       setLoading(false);
+      addLog('🏁 Request completed');
     }
   };
 
@@ -109,25 +130,8 @@ export default function FutureDay() {
                   />
                 </div>
 
-                {/* Date Selectors Grid - Telegram UI style */}
+                {/* Date Selectors Grid - Telegram UI style - Reordered: Month, Day, Year */}
                 <div className="grid grid-cols-3 gap-4">
-                  {/* Day Selector */}
-                  <div>
-                    <label className="block text-sm font-medium text-[var(--tg-hint-color,#999)] mb-2">
-                      Day
-                    </label>
-                    <TelegramSelect
-                      value={day}
-                      onChange={(e) => setDay(Number(e.target.value))}
-                    >
-                      {[...Array(daysInMonth)].map((_, idx) => (
-                        <option key={idx + 1} value={idx + 1}>
-                          {idx + 1}
-                        </option>
-                      ))}
-                    </TelegramSelect>
-                  </div>
-
                   {/* Month Selector */}
                   <div>
                     <label className="block text-sm font-medium text-[var(--tg-hint-color,#999)] mb-2">
@@ -145,6 +149,23 @@ export default function FutureDay() {
                     </TelegramSelect>
                   </div>
 
+                  {/* Day Selector */}
+                  <div>
+                    <label className="block text-sm font-medium text-[var(--tg-hint-color,#999)] mb-2">
+                      Day
+                    </label>
+                    <TelegramSelect
+                      value={day}
+                      onChange={(e) => setDay(Number(e.target.value))}
+                    >
+                      {[...Array(daysInMonth)].map((_, idx) => (
+                        <option key={idx + 1} value={idx + 1}>
+                          {idx + 1}
+                        </option>
+                      ))}
+                    </TelegramSelect>
+                  </div>
+
                   {/* Year Selector */}
                   <div>
                     <label className="block text-sm font-medium text-[var(--tg-hint-color,#999)] mb-2">
@@ -154,8 +175,8 @@ export default function FutureDay() {
                       value={year}
                       onChange={(e) => setYear(Number(e.target.value))}
                     >
-                      {[...Array(10)].map((_, idx) => {
-                        const y = new Date().getFullYear() + idx;
+                      {[...Array(151)].map((_, idx) => {
+                        const y = 1950 + idx;
                         return (
                           <option key={y} value={y}>
                             {y}
@@ -198,6 +219,32 @@ export default function FutureDay() {
                 )}
               </div>
             </div>
+
+            {/* Debug Panel */}
+            {isDebugMode && debugLogs.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mt-6 bg-yellow-900/40 backdrop-blur-xl border border-yellow-500/50 rounded-2xl p-6 shadow-2xl"
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-yellow-300">🐛 Debug Logs</h3>
+                  <button
+                    onClick={() => setDebugLogs([])}
+                    className="text-xs bg-yellow-500/20 hover:bg-yellow-500/30 px-3 py-1 rounded-lg transition-colors"
+                  >
+                    Clear
+                  </button>
+                </div>
+                <div className="space-y-1 max-h-64 overflow-y-auto">
+                  {debugLogs.map((log, idx) => (
+                    <div key={idx} className="text-xs font-mono text-yellow-100 bg-black/30 p-2 rounded break-words overflow-wrap-anywhere">
+                      {log}
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            )}
 
             {/* Results Card */}
             {prediction && (
