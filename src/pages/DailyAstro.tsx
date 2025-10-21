@@ -14,11 +14,11 @@ export default function DailyAstro() {
   // Check if debug mode is enabled via environment variable
   const isDebugMode = import.meta.env.VITE_DAILY_ASTRO_DEBUG_MODE === 'true';
 
-  // Add debug log helper (only logs if debug mode is enabled)
+  // Add log to debug panel
   const addLog = (message: string) => {
-    console.log(message);
     if (isDebugMode) {
-      setDebugLogs(prev => [...prev, `${new Date().toLocaleTimeString()}: ${message}`]);
+      const timestamp = new Date().toLocaleTimeString();
+      setDebugLogs(prev => [...prev, `[${timestamp}] ${message}`]);
     }
   };
 
@@ -223,21 +223,21 @@ export default function DailyAstro() {
             </div>
           )}
 
-          {/* Debug Logs Panel - Only show if debug mode is enabled */}
+          {/* Debug Panel */}
           {isDebugMode && debugLogs.length > 0 && (
-            <div className="mt-6 bg-black/60 backdrop-blur-sm border border-gray-700 rounded-xl p-4 max-h-60 overflow-y-auto w-full">
-              <div className="flex items-center justify-between mb-2">
-                <h4 className="text-xs font-semibold text-gray-400 uppercase">Debug Logs</h4>
+            <div className="mt-6 bg-yellow-900/40 backdrop-blur-xl border border-yellow-500/50 rounded-2xl p-6 shadow-2xl w-full">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-yellow-300">🐛 Debug Logs</h3>
                 <button
                   onClick={() => setDebugLogs([])}
-                  className="text-xs text-gray-500 hover:text-white"
+                  className="text-xs bg-yellow-500/20 hover:bg-yellow-500/30 px-3 py-1 rounded-lg transition-colors"
                 >
                   Clear
                 </button>
               </div>
-              <div className="space-y-1">
+              <div className="space-y-1 max-h-64 overflow-y-auto">
                 {debugLogs.map((log, idx) => (
-                  <div key={idx} className="text-xs text-gray-300 font-mono break-all">
+                  <div key={idx} className="text-xs font-mono text-yellow-100 bg-black/30 p-2 rounded">
                     {log}
                   </div>
                 ))}
