@@ -36,8 +36,17 @@ export const TelegramSelect = forwardRef<HTMLSelectElement, TelegramSelectProps>
             icon && "pl-11",
             // Dropdown arrow spacing
             "pr-10",
+            // Ensure proper touch handling
+            "touch-manipulation",
             className
           )}
+          // Prevent default click behavior issues
+          onMouseDown={(e) => {
+            e.stopPropagation();
+          }}
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
           {...props}
         >
           {children}
