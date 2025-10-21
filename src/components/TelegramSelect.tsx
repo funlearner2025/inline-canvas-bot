@@ -13,7 +13,14 @@ interface TelegramSelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
 export const TelegramSelect = forwardRef<HTMLSelectElement, TelegramSelectProps>(
   ({ className, icon, children, ...props }, ref) => {
     return (
-      <div className="relative w-full">
+      <div 
+        className="relative w-full" 
+        style={{ 
+          WebkitTapHighlightColor: 'transparent',
+          transform: 'translateZ(0)', // Force GPU acceleration
+          willChange: 'transform', // Optimize for changes
+        }}
+      >
         {icon && (
           <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--tg-hint-color,#999)] pointer-events-none z-10">
             {icon}
@@ -36,16 +43,14 @@ export const TelegramSelect = forwardRef<HTMLSelectElement, TelegramSelectProps>
             icon && "pl-11",
             // Dropdown arrow spacing
             "pr-10",
-            // Ensure proper touch handling
-            "touch-manipulation",
+            // Ensure proper touch handling and z-index
+            "touch-manipulation relative z-20",
             className
           )}
-          // Prevent default click behavior issues
-          onMouseDown={(e) => {
-            e.stopPropagation();
-          }}
-          onClick={(e) => {
-            e.stopPropagation();
+          style={{
+            WebkitTapHighlightColor: 'transparent',
+            WebkitAppearance: 'none',
+            MozAppearance: 'none',
           }}
           {...props}
         >
