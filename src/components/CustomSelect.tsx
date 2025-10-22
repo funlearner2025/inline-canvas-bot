@@ -28,6 +28,8 @@ export function CustomSelect({
 }: CustomSelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const selectedButtonRef = useRef<HTMLButtonElement>(null);
   
   const selectedOption = options.find(opt => opt.value === value);
 
@@ -48,6 +50,19 @@ export function CustomSelect({
       document.removeEventListener('mousedown', handleClickOutside);
       document.removeEventListener('touchstart', handleClickOutside);
     };
+  }, [isOpen]);
+
+  // Scroll to selected option when dropdown opens
+  useEffect(() => {
+    if (isOpen && selectedButtonRef.current && dropdownRef.current) {
+      // Use setTimeout to ensure DOM is fully rendered
+      setTimeout(() => {
+        selectedButtonRef.current?.scrollIntoView({
+          block: 'center',
+          behavior: 'auto' // Use 'auto' instead of 'smooth' for instant scroll
+        });
+      }, 0);
+    }
   }, [isOpen]);
 
   const handleSelect = (optionValue: string | number) => {
@@ -90,6 +105,7 @@ export function CustomSelect({
       {/* Dropdown Menu */}
       {isOpen && (
         <div 
+          ref={dropdownRef}
           className="absolute top-full left-0 right-0 mt-2 max-h-60 overflow-y-auto rounded-xl border border-[var(--tg-hint-color,rgba(255,255,255,0.1))] bg-[var(--tg-secondary-bg-color,rgba(255,255,255,0.08))] backdrop-blur-xl shadow-2xl z-50"
           style={{
             // Ensure dropdown is above everything
@@ -100,6 +116,7 @@ export function CustomSelect({
           {options.map((option) => (
             <button
               key={option.value}
+              ref={value === option.value ? selectedButtonRef : null}
               type="button"
               onClick={() => handleSelect(option.value)}
               className={cn(
