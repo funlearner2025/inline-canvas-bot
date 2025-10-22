@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Undo2, CalendarDays, Sparkles, Loader2, Calendar, CalendarRange } from 'lucide-react';
 import { LocationAutocomplete } from '@/components/LocationAutocomplete';
-import { TelegramSelect } from '@/components/TelegramSelect';
+import { CustomSelect } from '@/components/CustomSelect';
 import { postFutureDay } from '@/lib/api';
 
 type ViewMode = 'menu' | 'single-day' | 'date-range';
@@ -244,16 +244,11 @@ API endpoint /future-day-range needs to be implemented.`);
                       <label className="block text-sm font-medium text-[var(--tg-hint-color,#999)] mb-2">
                         Month
                       </label>
-                      <TelegramSelect
+                      <CustomSelect
                         value={month}
-                        onChange={(e) => setMonth(Number(e.target.value))}
-                      >
-                        {months.map((m, idx) => (
-                          <option key={idx} value={idx + 1}>
-                            {m.slice(0, 3)}
-                          </option>
-                        ))}
-                      </TelegramSelect>
+                        onChange={(value) => setMonth(Number(value))}
+                        options={months.map((m, idx) => ({ value: idx + 1, label: m.slice(0, 3) }))}
+                      />
                     </div>
 
                     {/* Day Selector */}
@@ -261,16 +256,11 @@ API endpoint /future-day-range needs to be implemented.`);
                       <label className="block text-sm font-medium text-[var(--tg-hint-color,#999)] mb-2">
                         Day
                       </label>
-                      <TelegramSelect
+                      <CustomSelect
                         value={day}
-                        onChange={(e) => setDay(Number(e.target.value))}
-                      >
-                        {[...Array(daysInMonth)].map((_, idx) => (
-                          <option key={idx + 1} value={idx + 1}>
-                            {idx + 1}
-                          </option>
-                        ))}
-                      </TelegramSelect>
+                        onChange={(value) => setDay(Number(value))}
+                        options={[...Array(daysInMonth)].map((_, idx) => ({ value: idx + 1, label: String(idx + 1) }))}
+                      />
                     </div>
 
                     {/* Year Selector */}
@@ -278,19 +268,14 @@ API endpoint /future-day-range needs to be implemented.`);
                       <label className="block text-sm font-medium text-[var(--tg-hint-color,#999)] mb-2">
                         Year
                       </label>
-                      <TelegramSelect
+                      <CustomSelect
                         value={year}
-                        onChange={(e) => setYear(Number(e.target.value))}
-                      >
-                        {[...Array(151)].map((_, idx) => {
+                        onChange={(value) => setYear(Number(value))}
+                        options={[...Array(151)].map((_, idx) => {
                           const y = 1950 + idx;
-                          return (
-                            <option key={y} value={y}>
-                              {y}
-                            </option>
-                          );
+                          return { value: y, label: String(y) };
                         })}
-                      </TelegramSelect>
+                      />
                     </div>
                   </div>
 
@@ -355,16 +340,11 @@ API endpoint /future-day-range needs to be implemented.`);
                         <label className="block text-xs font-medium text-[var(--tg-hint-color,#999)] mb-2">
                           Month
                         </label>
-                        <TelegramSelect
+                        <CustomSelect
                           value={fromMonth}
-                          onChange={(e) => setFromMonth(Number(e.target.value))}
-                        >
-                          {months.map((m, idx) => (
-                            <option key={idx} value={idx + 1}>
-                              {m.slice(0, 3)}
-                            </option>
-                          ))}
-                        </TelegramSelect>
+                          onChange={(value) => setFromMonth(Number(value))}
+                          options={months.map((m, idx) => ({ value: idx + 1, label: m.slice(0, 3) }))}
+                        />
                       </div>
 
                       {/* From Day */}
@@ -372,16 +352,11 @@ API endpoint /future-day-range needs to be implemented.`);
                         <label className="block text-xs font-medium text-[var(--tg-hint-color,#999)] mb-2">
                           Day
                         </label>
-                        <TelegramSelect
+                        <CustomSelect
                           value={fromDay}
-                          onChange={(e) => setFromDay(Number(e.target.value))}
-                        >
-                          {[...Array(fromDaysInMonth)].map((_, idx) => (
-                            <option key={idx + 1} value={idx + 1}>
-                              {idx + 1}
-                            </option>
-                          ))}
-                        </TelegramSelect>
+                          onChange={(value) => setFromDay(Number(value))}
+                          options={[...Array(fromDaysInMonth)].map((_, idx) => ({ value: idx + 1, label: String(idx + 1) }))}
+                        />
                       </div>
 
                       {/* From Year */}
@@ -389,19 +364,14 @@ API endpoint /future-day-range needs to be implemented.`);
                         <label className="block text-xs font-medium text-[var(--tg-hint-color,#999)] mb-2">
                           Year
                         </label>
-                        <TelegramSelect
+                        <CustomSelect
                           value={fromYear}
-                          onChange={(e) => setFromYear(Number(e.target.value))}
-                        >
-                          {[...Array(151)].map((_, idx) => {
+                          onChange={(value) => setFromYear(Number(value))}
+                          options={[...Array(151)].map((_, idx) => {
                             const y = 1950 + idx;
-                            return (
-                              <option key={y} value={y}>
-                                {y}
-                              </option>
-                            );
+                            return { value: y, label: String(y) };
                           })}
-                        </TelegramSelect>
+                        />
                       </div>
                     </div>
                   </div>
@@ -417,16 +387,11 @@ API endpoint /future-day-range needs to be implemented.`);
                         <label className="block text-xs font-medium text-[var(--tg-hint-color,#999)] mb-2">
                           Month
                         </label>
-                        <TelegramSelect
+                        <CustomSelect
                           value={toMonth}
-                          onChange={(e) => setToMonth(Number(e.target.value))}
-                        >
-                          {months.map((m, idx) => (
-                            <option key={idx} value={idx + 1}>
-                              {m.slice(0, 3)}
-                            </option>
-                          ))}
-                        </TelegramSelect>
+                          onChange={(value) => setToMonth(Number(value))}
+                          options={months.map((m, idx) => ({ value: idx + 1, label: m.slice(0, 3) }))}
+                        />
                       </div>
 
                       {/* To Day */}
@@ -434,16 +399,11 @@ API endpoint /future-day-range needs to be implemented.`);
                         <label className="block text-xs font-medium text-[var(--tg-hint-color,#999)] mb-2">
                           Day
                         </label>
-                        <TelegramSelect
+                        <CustomSelect
                           value={toDay}
-                          onChange={(e) => setToDay(Number(e.target.value))}
-                        >
-                          {[...Array(toDaysInMonth)].map((_, idx) => (
-                            <option key={idx + 1} value={idx + 1}>
-                              {idx + 1}
-                            </option>
-                          ))}
-                        </TelegramSelect>
+                          onChange={(value) => setToDay(Number(value))}
+                          options={[...Array(toDaysInMonth)].map((_, idx) => ({ value: idx + 1, label: String(idx + 1) }))}
+                        />
                       </div>
 
                       {/* To Year */}
@@ -451,19 +411,14 @@ API endpoint /future-day-range needs to be implemented.`);
                         <label className="block text-xs font-medium text-[var(--tg-hint-color,#999)] mb-2">
                           Year
                         </label>
-                        <TelegramSelect
+                        <CustomSelect
                           value={toYear}
-                          onChange={(e) => setToYear(Number(e.target.value))}
-                        >
-                          {[...Array(151)].map((_, idx) => {
+                          onChange={(value) => setToYear(Number(value))}
+                          options={[...Array(151)].map((_, idx) => {
                             const y = 1950 + idx;
-                            return (
-                              <option key={y} value={y}>
-                                {y}
-                              </option>
-                            );
+                            return { value: y, label: String(y) };
                           })}
-                        </TelegramSelect>
+                        />
                       </div>
                     </div>
                   </div>

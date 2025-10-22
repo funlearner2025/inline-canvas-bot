@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Undo2, Calendar, Sparkles, Loader2 } from 'lucide-react';
 import { LocationAutocomplete } from '@/components/LocationAutocomplete';
-import { TelegramSelect } from '@/components/TelegramSelect';
+import { CustomSelect } from '@/components/CustomSelect';
 import { postFutureMonth } from '@/lib/api';
 
 export default function FutureMonth() {
@@ -133,17 +133,12 @@ export default function FutureMonth() {
                     <label className="block text-sm font-medium text-[var(--tg-hint-color,#999)] mb-2">
                       Month
                     </label>
-                    <TelegramSelect
+                    <CustomSelect
                       value={month}
-                      onChange={(e) => setMonth(Number(e.target.value))}
+                      onChange={(value) => setMonth(Number(value))}
+                      options={months.map((m, idx) => ({ value: idx + 1, label: m }))}
                       icon={<Calendar className="w-5 h-5" />}
-                    >
-                      {months.map((m, idx) => (
-                        <option key={idx} value={idx + 1}>
-                          {m}
-                        </option>
-                      ))}
-                    </TelegramSelect>
+                    />
                   </div>
 
                   {/* Year Selector */}
@@ -151,19 +146,14 @@ export default function FutureMonth() {
                     <label className="block text-sm font-medium text-[var(--tg-hint-color,#999)] mb-2">
                       Year
                     </label>
-                    <TelegramSelect
+                    <CustomSelect
                       value={year}
-                      onChange={(e) => setYear(Number(e.target.value))}
-                    >
-                      {[...Array(151)].map((_, idx) => {
+                      onChange={(value) => setYear(Number(value))}
+                      options={[...Array(151)].map((_, idx) => {
                         const y = 1950 + idx;
-                        return (
-                          <option key={y} value={y}>
-                            {y}
-                          </option>
-                        );
+                        return { value: y, label: String(y) };
                       })}
-                    </TelegramSelect>
+                    />
                   </div>
                 </div>
 
