@@ -142,9 +142,9 @@ export default function FutureMonth() {
                     <CustomSelect
                       value={month}
                       onChange={(value) => setMonth(Number(value))}
-                      options={months.map((m, idx) => ({ value: idx + 1, label: m }))}
+                      options={months.map((m, idx) => ({ value: idx + 1, label: m.slice(0, 3) }))}
                       icon={<Calendar className="w-5 h-5" />}
-                      placeholder="Select month..."
+                      placeholder="Month"
                     />
                   </div>
 
