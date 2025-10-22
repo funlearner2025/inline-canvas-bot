@@ -10,7 +10,7 @@ import { postFutureMonth } from '@/lib/api';
 export default function FutureMonth() {
   const navigate = useNavigate();
   const [location, setLocation] = useState('');
-  const [month, setMonth] = useState(new Date().getMonth() + 1);
+  const [month, setMonth] = useState<number | ''>('');
   const [year, setYear] = useState(new Date().getFullYear());
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -37,6 +37,12 @@ export default function FutureMonth() {
     if (!location) {
       setError('Please select a location');
       addLog('❌ No location selected');
+      return;
+    }
+
+    if (month === '') {
+      setError('Please select a month');
+      addLog('❌ No month selected');
       return;
     }
 
@@ -138,6 +144,7 @@ export default function FutureMonth() {
                       onChange={(value) => setMonth(Number(value))}
                       options={months.map((m, idx) => ({ value: idx + 1, label: m }))}
                       icon={<Calendar className="w-5 h-5" />}
+                      placeholder="Select month..."
                     />
                   </div>
 

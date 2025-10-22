@@ -16,16 +16,16 @@ export default function FutureDay() {
   const today = new Date();
   
   // Single day states
-  const [day, setDay] = useState(today.getDate());
-  const [month, setMonth] = useState(today.getMonth() + 1);
+  const [day, setDay] = useState<number | ''>('');
+  const [month, setMonth] = useState<number | ''>('');
   const [year, setYear] = useState(today.getFullYear());
   
   // Date range states
-  const [fromDay, setFromDay] = useState(today.getDate());
-  const [fromMonth, setFromMonth] = useState(today.getMonth() + 1);
+  const [fromDay, setFromDay] = useState<number | ''>('');
+  const [fromMonth, setFromMonth] = useState<number | ''>('');
   const [fromYear, setFromYear] = useState(today.getFullYear());
-  const [toDay, setToDay] = useState(today.getDate());
-  const [toMonth, setToMonth] = useState(today.getMonth() + 1);
+  const [toDay, setToDay] = useState<number | ''>('');
+  const [toMonth, setToMonth] = useState<number | ''>('');
   const [toYear, setToYear] = useState(today.getFullYear());
   
   const [loading, setLoading] = useState(false);
@@ -50,16 +50,22 @@ export default function FutureDay() {
   ];
 
   // Calculate days in selected month for single day
-  const daysInMonth = new Date(year, month, 0).getDate();
+  const daysInMonth = month !== '' ? new Date(year, month, 0).getDate() : 31;
   
   // Calculate days in selected month for date range
-  const fromDaysInMonth = new Date(fromYear, fromMonth, 0).getDate();
-  const toDaysInMonth = new Date(toYear, toMonth, 0).getDate();
+  const fromDaysInMonth = fromMonth !== '' ? new Date(fromYear, fromMonth, 0).getDate() : 31;
+  const toDaysInMonth = toMonth !== '' ? new Date(toYear, toMonth, 0).getDate() : 31;
 
   const handleSingleDaySubmit = async () => {
     if (!location) {
       setError('Please select a location');
       addLog('❌ No location selected');
+      return;
+    }
+
+    if (month === '' || day === '') {
+      setError('Please select a complete date');
+      addLog('❌ Incomplete date selection');
       return;
     }
 
@@ -89,6 +95,12 @@ export default function FutureDay() {
     if (!location) {
       setError('Please select a location');
       addLog('❌ No location selected');
+      return;
+    }
+
+    if (fromMonth === '' || fromDay === '' || toMonth === '' || toDay === '') {
+      setError('Please select complete date range');
+      addLog('❌ Incomplete date range selection');
       return;
     }
 
@@ -248,6 +260,7 @@ API endpoint /future-day-range needs to be implemented.`);
                         value={month}
                         onChange={(value) => setMonth(Number(value))}
                         options={months.map((m, idx) => ({ value: idx + 1, label: m.slice(0, 3) }))}
+                        placeholder="Month"
                       />
                     </div>
 
@@ -260,6 +273,7 @@ API endpoint /future-day-range needs to be implemented.`);
                         value={day}
                         onChange={(value) => setDay(Number(value))}
                         options={[...Array(daysInMonth)].map((_, idx) => ({ value: idx + 1, label: String(idx + 1) }))}
+                        placeholder="Day"
                       />
                     </div>
 
@@ -344,6 +358,7 @@ API endpoint /future-day-range needs to be implemented.`);
                           value={fromMonth}
                           onChange={(value) => setFromMonth(Number(value))}
                           options={months.map((m, idx) => ({ value: idx + 1, label: m.slice(0, 3) }))}
+                          placeholder="Month"
                         />
                       </div>
 
@@ -356,6 +371,7 @@ API endpoint /future-day-range needs to be implemented.`);
                           value={fromDay}
                           onChange={(value) => setFromDay(Number(value))}
                           options={[...Array(fromDaysInMonth)].map((_, idx) => ({ value: idx + 1, label: String(idx + 1) }))}
+                          placeholder="Day"
                         />
                       </div>
 
@@ -391,6 +407,7 @@ API endpoint /future-day-range needs to be implemented.`);
                           value={toMonth}
                           onChange={(value) => setToMonth(Number(value))}
                           options={months.map((m, idx) => ({ value: idx + 1, label: m.slice(0, 3) }))}
+                          placeholder="Month"
                         />
                       </div>
 
@@ -403,6 +420,7 @@ API endpoint /future-day-range needs to be implemented.`);
                           value={toDay}
                           onChange={(value) => setToDay(Number(value))}
                           options={[...Array(toDaysInMonth)].map((_, idx) => ({ value: idx + 1, label: String(idx + 1) }))}
+                          placeholder="Day"
                         />
                       </div>
 
