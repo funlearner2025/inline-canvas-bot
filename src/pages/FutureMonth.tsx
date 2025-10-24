@@ -1,5 +1,5 @@
 // src/pages/FutureMonth.tsx
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Undo2, Calendar, Sparkles, Loader2 } from 'lucide-react';
@@ -19,6 +19,15 @@ export default function FutureMonth() {
 
   // Check if debug mode is enabled via environment variable
   const isDebugMode = import.meta.env.VITE_FUTURE_MONTH_DEBUG_MODE === 'true';
+
+  // Add initial debug log when debug mode is enabled
+  useEffect(() => {
+    if (isDebugMode) {
+      addLog('🐛 Debug mode enabled for Future Month');
+      addLog(`📡 Backend URL: ${import.meta.env.VITE_FLASK_API_URL}`);
+      addLog(`📍 Location autocomplete endpoint: /location_auto_complete`);
+    }
+  }, []);
 
   // Add log to debug panel
   const addLog = (message: string) => {
@@ -198,7 +207,7 @@ export default function FutureMonth() {
             </div>
 
             {/* Debug Panel */}
-            {isDebugMode && debugLogs.length > 0 && (
+            {isDebugMode && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -214,11 +223,17 @@ export default function FutureMonth() {
                   </button>
                 </div>
                 <div className="space-y-1 max-h-64 overflow-y-auto">
-                  {debugLogs.map((log, idx) => (
-                    <div key={idx} className="text-xs font-mono text-yellow-100 bg-black/30 p-2 rounded">
-                      {log}
+                  {debugLogs.length === 0 ? (
+                    <div className="text-xs font-mono text-yellow-100 bg-black/30 p-2 rounded">
+                      No logs yet. Enter a location to see autocomplete logs.
                     </div>
-                  ))}
+                  ) : (
+                    debugLogs.map((log, idx) => (
+                      <div key={idx} className="text-xs font-mono text-yellow-100 bg-black/30 p-2 rounded">
+                        {log}
+                      </div>
+                    ))
+                  )}
                 </div>
               </motion.div>
             )}

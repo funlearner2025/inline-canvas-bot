@@ -31,17 +31,21 @@ export function LocationAutocomplete({ value, onChange, placeholder }: LocationA
 
     if (value.length < 3) {
       setSuggestions([]);
+      console.log('[LocationAutocomplete] Query too short, minimum 3 characters required');
       return;
     }
 
+    console.log(`[LocationAutocomplete] Starting search for: "${value}"`);
     setLoading(true);
     debounceRef.current = setTimeout(async () => {
       try {
+        console.log(`[LocationAutocomplete] Calling searchLocation API...`);
         const results = await searchLocation(value);
+        console.log(`[LocationAutocomplete] Received ${results.length} suggestions:`, results);
         setSuggestions(results);
         setShowSuggestions(true);
       } catch (error) {
-        console.error('Location search failed:', error);
+        console.error('[LocationAutocomplete] Search failed:', error);
         setSuggestions([]);
       } finally {
         setLoading(false);
