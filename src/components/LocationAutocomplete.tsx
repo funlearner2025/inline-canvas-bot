@@ -42,8 +42,9 @@ export function LocationAutocomplete({ value, onChange, placeholder, onDebugLog 
     setLoading(true);
     debounceRef.current = setTimeout(async () => {
       try {
+        onDebugLog?.(`⏱️ Debounce timer completed (300ms)`);
         onDebugLog?.(`🌐 Calling /location_auto_complete...`);
-        const results = await searchLocation(value);
+        const results = await searchLocation(value, onDebugLog);
         onDebugLog?.(`✅ Received ${results.length} suggestions`);
         if (results.length > 0) {
           onDebugLog?.(`📋 Suggestions: ${results.slice(0, 3).join(', ')}${results.length > 3 ? '...' : ''}`);
@@ -58,6 +59,7 @@ export function LocationAutocomplete({ value, onChange, placeholder, onDebugLog 
         setSuggestions([]);
       } finally {
         setLoading(false);
+        onDebugLog?.(`🏁 Search completed`);
       }
     }, 300);
 

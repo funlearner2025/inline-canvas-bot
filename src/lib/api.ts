@@ -114,34 +114,46 @@ export async function postFutureDay(data: FutureDayPayload) {
 /**
  * Autocomplete location search via Flask webhook (Google Maps API)
  */
-export async function searchLocation(query: string): Promise<string[]> {
+export async function searchLocation(query: string, onDebugLog?: (message: string) => void): Promise<string[]> {
   console.log('[API] searchLocation called with query:', query);
+  onDebugLog?.(`[API] searchLocation called with: "${query}"`);
   
   if (!query || query.length < 3) {
     console.log('[API] Query too short, returning empty array');
+    onDebugLog?.(`[API] Query too short (${query.length} chars), minimum 3 required`);
     return [];
   }
 
   const url = `${BASE_URL}/location_auto_complete?query=${encodeURIComponent(query)}`;
   console.log('[API] Calling autocomplete endpoint:', url);
+  onDebugLog?.(`[API] Endpoint URL: ${url}`);
 
   try {
+    onDebugLog?.(`[API] Sending fetch request...`);
     const res = await fetch(url);
     console.log('[API] Autocomplete response status:', res.status, res.statusText);
+    onDebugLog?.(`[API] Response status: ${res.status} ${res.statusText}`);
     
     if (!res.ok) {
       console.warn('[API] Autocomplete failed with status:', res.status);
       const errorText = await res.text();
       console.warn('[API] Error response:', errorText);
+      onDebugLog?.(`[API] ❌ Error: ${res.status} - ${errorText}`);
       return [];
     }
 
     const data = await res.json();
     console.log('[API] Autocomplete response data:', data);
     console.log('[API] Number of predictions:', data.predictions?.length || 0);
+    onDebugLog?.(`[API] Parsed response, predictions count: ${data.predictions?.length || 0}`);
+    if (data.predictions && data.predictions.length > 0) {
+      onDebugLog?.(`[API] First prediction: "${data.predictions[0]}"`);
+    }
     return data.predictions || [];
   } catch (error) {
     console.error('[API] Location search error:', error);
+    const errorMsg = error instanceof Error ? error.message : String(error);
+    onDebugLog?.(`[API] ❌ Fetch error: ${errorMsg}`);
     return [];
   }
 }
