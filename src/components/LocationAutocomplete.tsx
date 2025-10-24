@@ -68,7 +68,8 @@ export function LocationAutocomplete({ value, onChange, placeholder, onDebugLog 
         clearTimeout(debounceRef.current);
       }
     };
-  }, [value, onDebugLog]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value]);
 
   const handleSelect = (location: string) => {
     onChange(location);
