@@ -43,18 +43,18 @@ export async function requestDailyAstroViaBot(userId: number, username?: string)
 }
 
 /**
- * Sends user location to Flask backend (/dailyastro)
+ * Sends user location to Flask backend (/daily_astro)
  * for Celestial Vibe Today (Daily Astro).
  */
 export async function postDailyAstro(lat: number, lon: number) {
   console.log("[API] postDailyAstro called with:", { lat, lon });
   console.log("[API] Backend URL:", BASE_URL);
-  console.log("[API] Full endpoint:", `${BASE_URL}/daily-astro`);
+  console.log("[API] Full endpoint:", `${BASE_URL}/daily_astro`);
   
   const payload = { lat, lon };
   console.log("[API] Sending payload:", payload);
   
-  const res = await fetch(`${BASE_URL}/daily-astro`, {
+  const res = await fetch(`${BASE_URL}/daily_astro`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
@@ -118,7 +118,7 @@ export async function searchLocation(query: string): Promise<string[]> {
   if (!query || query.length < 3) return [];
 
   try {
-    const res = await fetch(`${BASE_URL}/autocomplete?query=${encodeURIComponent(query)}`);
+    const res = await fetch(`${BASE_URL}/location_auto_complete?query=${encodeURIComponent(query)}`);
     
     if (!res.ok) {
       console.warn('Autocomplete failed:', res.status);
