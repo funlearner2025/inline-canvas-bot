@@ -504,12 +504,12 @@ API endpoint /future-day-range needs to be implemented.`);
                 </div>
                 <div className="space-y-1 max-h-64 overflow-y-auto">
                   {debugLogs.length === 0 ? (
-                    <div className="text-xs font-mono text-yellow-100 bg-black/30 p-2 rounded break-words overflow-wrap-anywhere">
+                    <div className="text-xs font-mono text-yellow-100 bg-black/30 p-2 rounded break-words">
                       No logs yet. Enter a location to see autocomplete logs.
                     </div>
                   ) : (
                     debugLogs.map((log, idx) => (
-                      <div key={idx} className="text-xs font-mono text-yellow-100 bg-black/30 p-2 rounded break-words overflow-wrap-anywhere">
+                      <div key={idx} className="text-xs font-mono text-yellow-100 bg-black/30 p-2 rounded break-all overflow-hidden">
                         {log}
                       </div>
                     ))
