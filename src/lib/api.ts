@@ -115,20 +115,33 @@ export async function postFutureDay(data: FutureDayPayload) {
  * Autocomplete location search via Flask webhook (Google Maps API)
  */
 export async function searchLocation(query: string): Promise<string[]> {
-  if (!query || query.length < 3) return [];
+  console.log('[API] searchLocation called with query:', query);
+  
+  if (!query || query.length < 3) {
+    console.log('[API] Query too short, returning empty array');
+    return [];
+  }
+
+  const url = `${BASE_URL}/location_auto_complete?query=${encodeURIComponent(query)}`;
+  console.log('[API] Calling autocomplete endpoint:', url);
 
   try {
-    const res = await fetch(`${BASE_URL}/location_auto_complete?query=${encodeURIComponent(query)}`);
+    const res = await fetch(url);
+    console.log('[API] Autocomplete response status:', res.status, res.statusText);
     
     if (!res.ok) {
-      console.warn('Autocomplete failed:', res.status);
+      console.warn('[API] Autocomplete failed with status:', res.status);
+      const errorText = await res.text();
+      console.warn('[API] Error response:', errorText);
       return [];
     }
 
     const data = await res.json();
+    console.log('[API] Autocomplete response data:', data);
+    console.log('[API] Number of predictions:', data.predictions?.length || 0);
     return data.predictions || [];
   } catch (error) {
-    console.error('Location search error:', error);
+    console.error('[API] Location search error:', error);
     return [];
   }
 }
