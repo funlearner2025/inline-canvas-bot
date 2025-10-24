@@ -255,6 +255,7 @@ API endpoint /future-day-range needs to be implemented.`);
                       value={location}
                       onChange={setLocation}
                       placeholder="Enter city or place..."
+                      onDebugLog={addLog}
                     />
                   </div>
 
@@ -349,6 +350,7 @@ API endpoint /future-day-range needs to be implemented.`);
                       value={location}
                       onChange={setLocation}
                       placeholder="Enter city or place..."
+                      onDebugLog={addLog}
                     />
                   </div>
 

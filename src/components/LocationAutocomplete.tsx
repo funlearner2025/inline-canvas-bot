@@ -9,6 +9,7 @@ interface LocationAutocompleteProps {
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
+  onDebugLog?: (message: string) => void;
 }
 
 /**
@@ -16,7 +17,7 @@ interface LocationAutocompleteProps {
  * Uses Telegram-style input with Tailwind animations
  * Connects to Flask backend webhook with Google Maps API
  */
-export function LocationAutocomplete({ value, onChange, placeholder }: LocationAutocompleteProps) {
+export function LocationAutocomplete({ value, onChange, placeholder, onDebugLog }: LocationAutocompleteProps) {
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -31,21 +32,29 @@ export function LocationAutocomplete({ value, onChange, placeholder }: LocationA
 
     if (value.length < 3) {
       setSuggestions([]);
-      console.log('[LocationAutocomplete] Query too short, minimum 3 characters required');
+      if (value.length > 0) {
+        onDebugLog?.(`📍 Location query too short: "${value}" (min 3 chars)`);
+      }
       return;
     }
 
-    console.log(`[LocationAutocomplete] Starting search for: "${value}"`);
+    onDebugLog?.(`🔍 Searching location: "${value}"`);
     setLoading(true);
     debounceRef.current = setTimeout(async () => {
       try {
-        console.log(`[LocationAutocomplete] Calling searchLocation API...`);
+        onDebugLog?.(`🌐 Calling /location_auto_complete...`);
         const results = await searchLocation(value);
-        console.log(`[LocationAutocomplete] Received ${results.length} suggestions:`, results);
+        onDebugLog?.(`✅ Received ${results.length} suggestions`);
+        if (results.length > 0) {
+          onDebugLog?.(`📋 Suggestions: ${results.slice(0, 3).join(', ')}${results.length > 3 ? '...' : ''}`);
+        } else {
+          onDebugLog?.(`⚠️ No suggestions found for "${value}"`);
+        }
         setSuggestions(results);
         setShowSuggestions(true);
       } catch (error) {
-        console.error('[LocationAutocomplete] Search failed:', error);
+        const errorMsg = error instanceof Error ? error.message : String(error);
+        onDebugLog?.(`❌ Location search failed: ${errorMsg}`);
         setSuggestions([]);
       } finally {
         setLoading(false);
@@ -57,7 +66,7 @@ export function LocationAutocomplete({ value, onChange, placeholder }: LocationA
         clearTimeout(debounceRef.current);
       }
     };
-  }, [value]);
+  }, [value, onDebugLog]);
 
   const handleSelect = (location: string) => {
     onChange(location);

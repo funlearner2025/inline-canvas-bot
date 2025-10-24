@@ -138,6 +138,7 @@ export default function FutureMonth() {
                     value={location}
                     onChange={setLocation}
                     placeholder="Enter city or place..."
+                    onDebugLog={addLog}
                   />
                 </div>
 
