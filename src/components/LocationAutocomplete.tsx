@@ -23,11 +23,18 @@ export function LocationAutocomplete({ value, onChange, placeholder, onDebugLog 
   const [showSuggestions, setShowSuggestions] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const debounceRef = useRef<NodeJS.Timeout>();
+  const justSelectedRef = useRef(false); // Track if user just selected from dropdown
 
   useEffect(() => {
     // Debounced search
     if (debounceRef.current) {
       clearTimeout(debounceRef.current);
+    }
+
+    // Skip search if user just selected from dropdown
+    if (justSelectedRef.current) {
+      justSelectedRef.current = false;
+      return;
     }
 
     if (value.length < 3) {
@@ -72,9 +79,11 @@ export function LocationAutocomplete({ value, onChange, placeholder, onDebugLog 
   }, [value]);
 
   const handleSelect = (location: string) => {
+    justSelectedRef.current = true; // Mark that user just selected
     onChange(location);
     setShowSuggestions(false);
     setSuggestions([]);
+    setLoading(false); // Stop any pending loading state
   };
 
   return (
