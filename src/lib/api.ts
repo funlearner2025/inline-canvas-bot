@@ -152,12 +152,16 @@ export async function searchLocation(query: string, onDebugLog?: (message: strin
 
     const data = await res.json();
     console.log('[API] Autocomplete response data:', data);
-    console.log('[API] Number of predictions:', data.predictions?.length || 0);
-    onDebugLog?.(`[API] Parsed response, predictions count: ${data.predictions?.length || 0}`);
-    if (data.predictions && data.predictions.length > 0) {
-      onDebugLog?.(`[API] First prediction: "${data.predictions[0]}"`);
+    
+    // Backend returns { ok, count, results: [{description, place_id}, ...] }
+    const suggestions = data.results?.map((result: any) => result.description) || [];
+    
+    console.log('[API] Number of suggestions:', suggestions.length);
+    onDebugLog?.(`[API] Parsed response, suggestions count: ${suggestions.length}`);
+    if (suggestions.length > 0) {
+      onDebugLog?.(`[API] First suggestion: "${suggestions[0]}"`);
     }
-    return data.predictions || [];
+    return suggestions;
   } catch (error) {
     console.error('[API] Location search error:', error);
     const errorMsg = error instanceof Error ? error.message : String(error);
