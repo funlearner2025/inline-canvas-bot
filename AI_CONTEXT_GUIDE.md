@@ -4,6 +4,302 @@
 
 ---
 
+## 🔄 Logic Flow Diagram
+
+```
+User Input (Telegram WebView)
+    ↓
+React Component (pages/*.tsx)
+    ↓
+Form State Management (useState hooks)
+    ↓
+Validation & User Feedback
+    ↓
+API Call (lib/api.ts)
+    ↓
+Flask Backend (VITE_FLASK_API_URL)
+    ↓
+External Services (Google Maps API, Astrology Engine)
+    ↓
+JSON/Text Response
+    ↓
+React State Update (setState)
+    ↓
+UI Re-render (Framer Motion animations)
+    ↓
+Telegram Theme Sync (TelegramThemeProvider)
+    ↓
+User Sees Result
+```
+
+---
+
+## 📊 File Responsibility Table
+
+| File / Folder | Purpose | Safe for AI Edit | Notes |
+|---------------|---------|------------------|-------|
+| **Core Application** |
+| `src/App.tsx` | Root layout, routing, SDK initialization | ✅ | Add routes or global wrappers only |
+| `src/main.tsx` | React entry point | ⚠️ | Rarely edited - only for global providers |
+| `src/index.css` | Global styles, CSS variables, theme colors | ✅ | Primary location for theme changes |
+| `index.html` | HTML template, viewport meta tags | ⚠️ | Only edit for meta tags or title |
+| **Pages (Main Edit Zone)** |
+| `src/pages/Index.tsx` | Home navigation page | ✅ | Safe to modify layout and cards |
+| `src/pages/DailyAstro.tsx` | Daily astrology page | ✅ | Safe to modify UI and form logic |
+| `src/pages/FutureMonth.tsx` | Future month predictions | ✅ | Safe to modify UI and form logic |
+| `src/pages/FutureDay.tsx` | Future day predictions (most complex) | ✅ | Safe to modify - dual-mode interface |
+| `src/pages/NotFound.tsx` | 404 error page | ✅ | Safe to customize |
+| **Custom Components (Reusable)** |
+| `src/components/CosmicBackground.tsx` | Animated starfield | ⚠️ | Modify with caution - performance critical |
+| `src/components/CosmicCard.tsx` | Hero card component | ✅ | Safe to modify styling and props |
+| `src/components/CustomSelect.tsx` | **Critical mobile dropdown fix** | ⚠️ | **Only modify for bug fixes - battle-tested** |
+| `src/components/LocationAutocomplete.tsx` | Location search with autocomplete | ✅ | Safe to modify UI and behavior |
+| `src/components/TelegramInput.tsx` | Telegram-styled input | ✅ | Safe to modify styling |
+| `src/components/TelegramThemeProvider.tsx` | Theme synchronization | ❌ | **Do not modify - core functionality** |
+| `src/components/LoadingSpinner.tsx` | Loading indicator | ✅ | Safe to modify |
+| **shadcn-ui Primitives** |
+| `src/components/ui/*` | Radix UI + Tailwind primitives (49 files) | ⚠️ | **Avoid direct modification - regenerate if needed** |
+| **Library & Utilities** |
+| `src/lib/api.ts` | Backend API calls and endpoints | ⚠️ | **Only update endpoints, payloads, or error handling** |
+| `src/lib/telegram.ts` | Telegram SDK integration | ❌ | **Do not modify - platform critical** |
+| `src/lib/utils.ts` | Helper functions (cn, etc.) | ✅ | Safe to add utilities |
+| **Hooks** |
+| `src/hooks/useTelegram.ts` | Telegram SDK utilities | ❌ | **Do not modify** |
+| `src/hooks/use-mobile.tsx` | Mobile detection | ✅ | Safe to modify breakpoints |
+| `src/hooks/use-toast.ts` | Toast notifications | ✅ | Safe to modify |
+| **Configuration (Rarely Modified)** |
+| `vite.config.ts` | Vite build configuration | ❌ | **Do not modify without explicit instruction** |
+| `tailwind.config.ts` | Tailwind CSS configuration | ⚠️ | **Only add theme extensions - don't remove existing** |
+| `tsconfig.json` | TypeScript configuration | ❌ | **Do not modify** |
+| `tsconfig.app.json` | TypeScript app configuration | ❌ | **Do not modify** |
+| `package.json` | Dependencies and scripts | ⚠️ | **Only add dependencies when requested** |
+| `components.json` | shadcn-ui configuration | ❌ | **Do not modify** |
+| **Type Definitions** |
+| `src/telegram.d.ts` | Telegram SDK TypeScript declarations | ❌ | **Do not modify** |
+| **Environment** |
+| `.env` | Environment variables (not in repo) | ✅ | Safe to add new variables |
+| `.env.example` | Environment variable template | ✅ | Update when adding new variables |
+
+### Legend
+- ✅ **Safe for AI Edit**: Can be modified with standard precautions
+- ⚠️ **Edit with Caution**: Only modify when necessary, test thoroughly
+- ❌ **Do Not Touch**: Critical infrastructure, modify only with explicit instruction
+
+---
+
+## 🎯 AI Editing Protocols
+
+### Decision Map: User Intent → Files to Modify
+
+| User Request Type | Primary Files to Edit | Secondary Files | Testing Focus |
+|-------------------|----------------------|-----------------|---------------|
+| "Add a new page" | `src/pages/NewPage.tsx`, `src/App.tsx` (routing) | `src/pages/Index.tsx` (add nav card) | iOS/Android navigation |
+| "Change theme colors" | `src/index.css` (CSS variables) | `tailwind.config.ts` (if new colors) | Light/dark mode sync |
+| "Fix dropdown issue" | `src/components/CustomSelect.tsx` | N/A | iOS Telegram WebView |
+| "Add API endpoint" | `src/lib/api.ts` (new function) | Page component (integrate call) | Network error handling |
+| "Modify form validation" | Page component (`FutureDay.tsx`, etc.) | N/A | Empty state handling |
+| "Update animations" | Page/component with motion.div | N/A | 60fps on iPhone 12 |
+| "Change layout" | Specific page component | N/A | Mobile portrait orientation |
+| "Add debug logging" | Page component (add debug panel) | `.env.example` (add variable) | Telegram Mini App view |
+| "Fix mobile layout" | Specific page component | `src/index.css` (safe-area) | iPhone X+ notch, Android nav bar |
+| "Add location feature" | Use `LocationAutocomplete.tsx` component | N/A | Autocomplete UX |
+
+### Safe Modification Policies
+
+#### ✅ **ALWAYS Safe to Do**
+- Add new page components following the established pattern
+- Modify page-level layouts and styling within `src/pages/*`
+- Update form state and validation logic
+- Add new API endpoint functions in `src/lib/api.ts`
+- Extend Tailwind theme in `tailwind.config.ts` (additive only)
+- Add CSS custom properties in `src/index.css`
+- Create new reusable components in `src/components/`
+- Add environment variables to `.env.example`
+
+#### ⚠️ **Proceed with Caution**
+- Modifying `CustomSelect.tsx` (mobile compatibility critical)
+- Changing animation duration/easing (performance impact)
+- Updating `src/lib/api.ts` endpoint URLs (backend dependency)
+- Modifying `CosmicBackground.tsx` (GPU performance sensitive)
+- Editing `tailwind.config.ts` (don't remove existing values)
+- Adding npm packages (check bundle size impact)
+
+#### ❌ **NEVER Do Without Explicit Instruction**
+- Modify `src/lib/telegram.ts` (platform integration)
+- Edit `src/components/TelegramThemeProvider.tsx` (theme sync)
+- Change `vite.config.ts` (build configuration)
+- Modify files in `src/components/ui/*` (shadcn-ui managed)
+- Edit TypeScript config files (`tsconfig*.json`)
+- Change `src/hooks/useTelegram.ts` (SDK wrapper)
+- Replace `CustomSelect` with native `<select>` (known bug)
+- Disable safe-area insets (notch support)
+
+### Testing Recommendations
+
+#### Platform Testing Priority
+1. **iOS Telegram** (highest priority - most quirks)
+   - Test on iPhone 12+ with notch
+   - Verify `CustomSelect` dropdown behavior
+   - Check safe-area insets (top/bottom)
+   - Test theme switching (light/dark)
+
+2. **Android Telegram** (medium priority)
+   - Test on Pixel/Samsung devices
+   - Verify bottom navigation bar spacing
+   - Check input focus behavior
+
+3. **Telegram Desktop** (lowest priority)
+   - Quick visual check
+   - Verify mouse hover states
+
+#### Checklist After Each Edit
+- [ ] Run `npm run build` successfully
+- [ ] No TypeScript errors in editor
+- [ ] Test on mobile device (real device preferred)
+- [ ] Verify dark/light mode both work
+- [ ] Check safe-area insets on notch devices
+- [ ] Confirm animations run at 60fps
+- [ ] Test form validation (empty states, invalid inputs)
+- [ ] Verify API calls with backend (or mock)
+
+---
+
+## 🏗️ Component Hierarchy
+
+```
+App.tsx (Root)
+├── TelegramThemeProvider (Theme Sync)
+│   └── Router
+│       ├── Index.tsx (Home Page)
+│       │   ├── CosmicBackground
+│       │   └── CosmicCard (×3 navigation cards)
+│       │       └── motion.div (Framer Motion wrapper)
+│       ├── DailyAstro.tsx
+│       │   ├── CosmicBackground
+│       │   ├── TelegramInput (location search)
+│       │   └── LocationAutocomplete (optional)
+│       ├── FutureMonth.tsx
+│       │   ├── CosmicBackground
+│       │   ├── LocationAutocomplete
+│       │   ├── CustomSelect (Month)
+│       │   ├── CustomSelect (Year)
+│       │   └── Debug Panel (conditional)
+│       ├── FutureDay.tsx (Most Complex)
+│       │   ├── CosmicBackground
+│       │   ├── Menu View
+│       │   │   └── Option Cards (×2)
+│       │   ├── Single Day View
+│       │   │   ├── LocationAutocomplete
+│       │   │   ├── CustomSelect (Month)
+│       │   │   ├── CustomSelect (Day)
+│       │   │   └── CustomSelect (Year)
+│       │   ├── Date Range View
+│       │   │   ├── LocationAutocomplete
+│       │   │   ├── From: CustomSelect (×3)
+│       │   │   └── To: CustomSelect (×3)
+│       │   └── Debug Panel (conditional)
+│       └── NotFound.tsx
+│           └── CosmicBackground
+└── Common Components (used across pages)
+    ├── LoadingSpinner (API call in progress)
+    ├── CustomSelect (all dropdowns)
+    ├── LocationAutocomplete (location searches)
+    └── TelegramInput (text inputs)
+```
+
+### Component Interaction Flow
+
+```
+User Interaction
+    ↓
+CustomSelect (controlled component)
+    ↓
+onChange callback
+    ↓
+Parent setState (e.g., setMonth)
+    ↓
+State Update Triggers Re-render
+    ↓
+Validation Check (before submit)
+    ↓
+API Call (if valid)
+    ↓
+Loading Spinner Shows
+    ↓
+Response Received
+    ↓
+State Update (prediction text)
+    ↓
+Results Card Animates In (Framer Motion)
+```
+
+---
+
+## 🚫 Do-Not-Touch Rules
+
+### Files AI Should NEVER Modify (Without Explicit User Instruction)
+
+1. **`src/lib/telegram.ts`**
+   - **Why**: Core Telegram SDK initialization, viewport management, theme detection
+   - **Risk**: Breaking this breaks the entire Telegram integration
+   - **If User Requests Changes**: Ask for clarification and explain risks
+
+2. **`src/components/TelegramThemeProvider.tsx`**
+   - **Why**: Manages automatic theme synchronization with Telegram app
+   - **Risk**: App won't sync with Telegram's light/dark mode
+   - **If User Requests Changes**: Suggest testing in both themes first
+
+3. **`src/hooks/useTelegram.ts`**
+   - **Why**: Telegram SDK utilities wrapper
+   - **Risk**: Loss of SDK functionality
+
+4. **`vite.config.ts`**
+   - **Why**: Build configuration optimized for Telegram WebView
+   - **Risk**: Build failures, performance degradation
+   - **If User Requests Changes**: Only add plugins/aliases, never remove existing
+
+5. **`tsconfig.json`, `tsconfig.app.json`, `tsconfig.node.json`**
+   - **Why**: TypeScript configuration with relaxed checking for this project
+   - **Risk**: Type errors throughout codebase
+
+6. **`components.json`**
+   - **Why**: shadcn-ui CLI configuration
+   - **Risk**: Breaking shadcn-ui component generation
+
+7. **`src/components/ui/*` (49 files)**
+   - **Why**: Generated by shadcn-ui CLI, not meant for manual editing
+   - **If User Requests Changes**: Suggest creating wrapper components instead
+   - **Exception**: Can modify if regenerating component with `npx shadcn-ui add`
+
+8. **`src/telegram.d.ts`**
+   - **Why**: TypeScript declarations for Telegram SDK
+   - **Risk**: Loss of type safety for Telegram APIs
+
+9. **`package.json`**
+   - **Why**: Dependency versions carefully selected for compatibility
+   - **If User Requests Changes**: Only add new dependencies, never remove or update existing without testing
+
+10. **`src/components/CustomSelect.tsx`**
+    - **Why**: Battle-tested solution for iOS/Android dropdown bugs
+    - **Risk**: Reintroducing the native `<select>` double-tap bug
+    - **If User Requests Changes**: Only for bug fixes, never architectural changes
+    - **Red Flag**: If user suggests "simplifying" with native select, explain why CustomSelect exists
+
+### Architecture Decisions That Are PERMANENT
+
+❌ **Do NOT suggest or implement**:
+- Replacing `CustomSelect` with native `<select>` elements
+- Removing safe-area inset padding from pages
+- Using `user-scalable=no` in viewport meta tag
+- Hardcoding colors instead of CSS variables
+- Animating layout properties (width, height, padding, margin)
+- Removing `TelegramThemeProvider` wrapper
+- Using CSS-in-JS libraries (stick with Tailwind)
+- Adding Redux/Zustand (stick with useState/useContext)
+- Removing Framer Motion (core to animation strategy)
+
+---
+
 ## Overview
 
 This is a **cross-platform Telegram Mini App** built with React, TypeScript, and Tailwind CSS. It provides astrological insights through a mystical, cosmic-themed UI optimized for mobile devices (iOS, Android) and Telegram Desktop.
@@ -622,3 +918,293 @@ npm run preview      # Preview production build
 **Generated by**: Qoder AI
 
 **Note for AI Assistants**: This guide is definitive. When the user asks for modifications, cross-reference this document to ensure consistency with established patterns, especially for mobile compatibility, Telegram integration, and performance optimization.
+
+---
+
+## 🤖 AI Summary: Critical Instructions for Safe Editing
+
+### Core Principles
+
+When modifying this Telegram Mini App codebase, **ALWAYS**:
+
+1. **Follow Editing Protocols**
+   - Consult the **File Responsibility Table** before editing any file
+   - Check **Do-Not-Touch Rules** to avoid breaking core functionality
+   - Use the **Decision Map** to identify which files to modify for each user request
+   - Run through the **Testing Checklist** after every change
+
+2. **Maintain Mobile-First Architecture**
+   - Start all layouts with mobile portrait (320px width)
+   - Add responsive breakpoints with `sm:` and `md:` prefixes
+   - Use `min-h-screen` for full-height pages
+   - Keep touch targets minimum 44×44px
+
+3. **Respect Safe Area Insets**
+   - Every page must use inline styles with `env(safe-area-inset-*)`
+   - Fixed position elements need inset adjustments for notches
+   - Test on iPhone X+ and modern Android devices
+
+4. **Preserve Telegram Theme Integrity**
+   - Use CSS variables `var(--tg-*)` for all colors
+   - Never hardcode colors (breaks light/dark mode sync)
+   - Don't modify `TelegramThemeProvider` or `telegram.ts`
+
+5. **Use Only Functional Components**
+   - All components use React hooks (useState, useEffect, useRef)
+   - No class components
+   - Follow the established component patterns
+
+6. **Follow Tailwind CSS Best Practices**
+   - Use Tailwind utility classes exclusively
+   - Only add inline styles for safe-area insets or dynamic values
+   - Extend theme in `tailwind.config.ts` for new colors
+   - Never add custom CSS classes (use `@apply` in `index.css` if absolutely necessary)
+
+7. **Avoid Redundant Imports**
+   - React auto-imports in modern setup (no need for `import React`)
+   - Only import hooks and components actually used
+   - Use path alias `@/` for src imports
+
+8. **Never Nest CustomSelect or LocationAutocomplete**
+   - These are complex controlled components
+   - Keep them as direct children of page layouts
+   - Don't wrap in unnecessary divs (breaks z-index stacking)
+
+### Performance Mandates
+
+**Animation Rules**:
+- ✅ Only animate: `opacity`, `scale`, `x`, `y`, `rotate`
+- ❌ Never animate: `width`, `height`, `padding`, `margin`, `top`, `left`
+- Use Framer Motion for all animations (no CSS transitions for complex effects)
+- Keep animated elements under 20 simultaneously
+- Target 60fps minimum (test on iPhone 12)
+
+**Bundle Size**:
+- Check bundle impact before adding new npm packages
+- Lazy load pages with React.lazy if bundle exceeds 500KB
+- Tree-shake unused Tailwind classes in production
+
+### Critical Component Usage
+
+**Dropdowns**:
+```tsx
+// ✅ CORRECT: Use CustomSelect for all dropdowns
+<CustomSelect
+  value={month}
+  onChange={(value) => setMonth(Number(value))}
+  options={monthOptions}
+  placeholder="Month"
+/>
+
+// ❌ WRONG: Native select (broken on iOS/Android)
+<select value={month} onChange={e => setMonth(e.target.value)}>
+  <option>January</option>
+</select>
+```
+
+**Location Input**:
+```tsx
+// ✅ CORRECT: Use LocationAutocomplete with autocomplete
+<LocationAutocomplete
+  value={location}
+  onChange={setLocation}
+  placeholder="Enter city or place..."
+  onDebugLog={addLog} // Optional: for debug mode
+/>
+
+// ⚠️ ACCEPTABLE: Plain TelegramInput (no autocomplete)
+<TelegramInput
+  value={location}
+  onChange={e => setLocation(e.target.value)}
+/>
+```
+
+**Animations**:
+```tsx
+// ✅ CORRECT: GPU-accelerated properties
+<motion.div
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.3, ease: 'easeOut' }}
+>
+
+// ❌ WRONG: Layout-triggering properties
+<motion.div
+  animate={{ width: 300, padding: 20 }} // Causes reflow!
+>
+```
+
+### API Integration Pattern
+
+**Always follow this pattern**:
+```tsx
+const [loading, setLoading] = useState(false);
+const [error, setError] = useState('');
+const [result, setResult] = useState('');
+
+const handleSubmit = async () => {
+  // 1. Validate inputs
+  if (!location || month === '' || year === '') {
+    setError('Please fill all fields');
+    return;
+  }
+
+  // 2. Set loading state
+  setLoading(true);
+  setError('');
+
+  try {
+    // 3. Make API call
+    const response = await postFutureMonth({
+      location,
+      month: Number(month),
+      year: Number(year),
+    });
+
+    // 4. Update result
+    setResult(response.message || response);
+  } catch (err) {
+    // 5. Handle error
+    setError(err instanceof Error ? err.message : 'Request failed');
+  } finally {
+    // 6. Clear loading
+    setLoading(false);
+  }
+};
+```
+
+### Git Workflow Preferences
+
+**User prefers sequential git operations**:
+1. User runs: `git add .`
+2. User runs: `git commit -m "message"`
+3. **AI runs**: `git push` (only when explicitly requested)
+
+**Never**:
+- Run `git add` or `git commit` automatically
+- Combine git operations without user request
+- Push without explicit "run git push" instruction
+
+### Debug Mode Implementation
+
+When adding debug panels:
+```tsx
+// 1. Add environment variable check
+const isDebugMode = import.meta.env.VITE_PAGE_NAME_DEBUG_MODE === 'true';
+
+// 2. Add state for logs
+const [debugLogs, setDebugLogs] = useState<string[]>([]);
+
+// 3. Add logging function
+const addLog = (message: string) => {
+  if (isDebugMode) {
+    const timestamp = new Date().toLocaleTimeString();
+    setDebugLogs(prev => [...prev, `[${timestamp}] ${message}`]);
+  }
+};
+
+// 4. Add initial logs in useEffect
+useEffect(() => {
+  if (isDebugMode) {
+    addLog('🐛 Debug mode enabled');
+    addLog(`📡 Backend URL: ${import.meta.env.VITE_FLASK_API_URL}`);
+  }
+}, []);
+
+// 5. Pass to child components if needed
+<LocationAutocomplete onDebugLog={addLog} />
+
+// 6. Render debug panel
+{isDebugMode && (
+  <motion.div className="mt-6 bg-yellow-900/40 backdrop-blur-xl border border-yellow-500/50 rounded-2xl p-6 shadow-2xl">
+    <div className="flex items-center justify-between mb-4">
+      <h3 className="text-lg font-semibold text-yellow-300">🐛 Debug Logs</h3>
+      <button onClick={() => setDebugLogs([])} className="text-xs bg-yellow-500/20 hover:bg-yellow-500/30 px-3 py-1 rounded-lg transition-colors">
+        Clear
+      </button>
+    </div>
+    <div className="space-y-1 max-h-64 overflow-y-auto">
+      {debugLogs.map((log, idx) => (
+        <div key={idx} className="text-xs font-mono text-yellow-100 bg-black/30 p-2 rounded break-all overflow-hidden">
+          {log}
+        </div>
+      ))}
+    </div>
+  </motion.div>
+)}
+```
+
+### Common Pitfalls to Avoid
+
+| Mistake | Why It's Wrong | Correct Approach |
+|---------|----------------|------------------|
+| Using native `<select>` | Double-tap bug on iOS/Android | Use `CustomSelect` component |
+| Hardcoding colors | Breaks theme sync | Use `var(--tg-text-color)` |
+| Animating `width` | Causes layout reflow | Animate `scaleX` instead |
+| Ignoring safe-area | Notch cuts off content | Use `env(safe-area-inset-*)` |
+| Adding `user-scalable=no` | Breaks iOS select | Keep `user-scalable=yes` |
+| Modifying `telegram.ts` | Breaks SDK integration | Never touch unless instructed |
+| Nested `CustomSelect` | Z-index issues | Keep as direct children |
+| Class components | Not the project pattern | Use functional components only |
+| CSS-in-JS | Not the architecture | Use Tailwind classes |
+| Missing error handling | Poor UX on API failure | Always try/catch API calls |
+
+### Quick Decision Tree
+
+```
+User Request Received
+    ↓
+[Check File Responsibility Table]
+    ↓
+Is file marked ❌ (Do Not Touch)?
+    │
+    ├─ YES → Ask user for explicit permission & explain risks
+    │
+    └─ NO → Continue
+        ↓
+    Is file marked ⚠️ (Caution)?
+        │
+        ├─ YES → Explain changes thoroughly & test carefully
+        │
+        └─ NO → Safe to edit
+            ↓
+        [Make Changes]
+            ↓
+        [Follow Testing Checklist]
+            ↓
+        [Wait for user's git add/commit]
+            ↓
+        User says "run git push"?
+            │
+            ├─ YES → Execute git push
+            │
+            └─ NO → Wait for instruction
+```
+
+### Final Checklist Before Every Edit
+
+- [ ] Consulted File Responsibility Table
+- [ ] Checked Do-Not-Touch Rules
+- [ ] Using CustomSelect for all dropdowns
+- [ ] Using Telegram theme CSS variables
+- [ ] Following mobile-first design
+- [ ] Respecting safe-area insets
+- [ ] Using functional components only
+- [ ] Using Tailwind classes (no custom CSS)
+- [ ] Animating only GPU properties
+- [ ] Including error handling for API calls
+- [ ] Avoiding redundant imports
+- [ ] Not nesting complex components unnecessarily
+
+---
+
+**Remember**: This is a production Telegram Mini App with **real users on mobile devices**. Every change must maintain:
+- 📱 Mobile compatibility (iOS & Android)
+- 🎨 Theme synchronization (light/dark)
+- ⚡ 60fps performance
+- 🔒 Safe-area support (notches)
+- ✅ Functional correctness
+
+**When in doubt**: Ask the user for clarification rather than making assumptions. The patterns established in this codebase have been battle-tested in production.
+
+---

@@ -124,13 +124,21 @@ export async function searchLocation(query: string, onDebugLog?: (message: strin
     return [];
   }
 
-  const url = `${BASE_URL}/location_auto_complete?query=${encodeURIComponent(query)}`;
+  const url = `${BASE_URL}/location_auto_complete`;
+  const payload = { query };
   console.log('[API] Calling autocomplete endpoint:', url);
+  console.log('[API] Payload:', payload);
   onDebugLog?.(`[API] Endpoint URL: ${url}`);
+  onDebugLog?.(`[API] Request method: POST`);
+  onDebugLog?.(`[API] Query: "${query}"`);
 
   try {
-    onDebugLog?.(`[API] Sending fetch request...`);
-    const res = await fetch(url);
+    onDebugLog?.(`[API] Sending POST request...`);
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
     console.log('[API] Autocomplete response status:', res.status, res.statusText);
     onDebugLog?.(`[API] Response status: ${res.status} ${res.statusText}`);
     
