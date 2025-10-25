@@ -58,7 +58,7 @@ export default function DailyAstro() {
       
       addLog(`Sending payload: ${JSON.stringify(payload)}`);
       
-      const response = await fetch(`${import.meta.env.VITE_FLASK_API_URL}/daily-astro`, {
+      const response = await fetch(`${import.meta.env.VITE_FLASK_API_URL}/daily_astro`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
