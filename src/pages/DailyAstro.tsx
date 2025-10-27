@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Loader2, Undo2, AlertCircle, MapPin } from "lucide-react";
+import { Loader2, Undo2, AlertCircle, MapPin, Download } from "lucide-react";
+import { postDailyAstro } from "@/lib/api";
 
 export default function DailyAstro() {
   const navigate = useNavigate();
@@ -10,6 +11,7 @@ export default function DailyAstro() {
   const [error, setError] = useState<string | null>(null);
   const [showLocationRequest, setShowLocationRequest] = useState(false);
   const [debugLogs, setDebugLogs] = useState<string[]>([]);
+  const [pdfUrl, setPdfUrl] = useState<string | null>(null);
   
   // Check if debug mode is enabled via environment variable
   const isDebugMode = import.meta.env.VITE_DAILY_ASTRO_DEBUG_MODE === 'true';
@@ -26,6 +28,7 @@ export default function DailyAstro() {
   async function requestLocation() {
     setLoading(true);
     setError(null);
+    setPdfUrl(null);
     addLog("Starting location request...");
 
     try {
@@ -40,44 +43,19 @@ export default function DailyAstro() {
       });
 
       addLog(`Location received: ${coords.latitude}, ${coords.longitude}`);
+      addLog(`Calling postDailyAstro API...`);
 
-      // Get Telegram user ID
-      const telegramUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
-      const userId = telegramUser?.id;
-      const username = telegramUser?.username || telegramUser?.first_name || "there";
-      
-      addLog(`Telegram user: ${username} (ID: ${userId || 'not available'})`);
-      addLog(`Backend URL: ${import.meta.env.VITE_FLASK_API_URL}`);
+      // Call the API function from lib/api.ts
+      const result = await postDailyAstro(coords.latitude, coords.longitude);
+      addLog(`API Response: ${JSON.stringify(result)}`);
 
-      // Send location to backend
-      const payload = {
-        lat: coords.latitude,
-        lon: coords.longitude,
-        chat_id: userId
-      };
-      
-      addLog(`Sending payload: ${JSON.stringify(payload)}`);
-      
-      const response = await fetch(`${import.meta.env.VITE_FLASK_API_URL}/daily_astro`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-
-      addLog(`Response status: ${response.status} ${response.statusText}`);
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        addLog(`Error response: ${errorText}`);
-        throw new Error(`Backend error: ${response.status}`);
+      // Extract PDF URL from response
+      if (result.ok && result.pdf_url) {
+        setPdfUrl(result.pdf_url);
+        addLog(`✅ PDF generated successfully: ${result.pdf_url}`);
+      } else {
+        throw new Error('PDF URL not found in response');
       }
-
-      const result = await response.json();
-      addLog(`Success response: ${JSON.stringify(result)}`);
-
-      // Success - show message
-      alert(`✅ Location sent! Check your Telegram chat with the bot for your Daily Astro reading.`);
-      setShowLocationRequest(false);
       
     } catch (e: any) {
       console.error('Location request failed:', e);
@@ -95,6 +73,23 @@ export default function DailyAstro() {
     } finally {
       setLoading(false);
     }
+  }
+
+  // Handle PDF download
+  function downloadPdf() {
+    if (!pdfUrl) return;
+    
+    addLog(`Downloading PDF from: ${pdfUrl}`);
+    
+    // Create a temporary anchor element to trigger download
+    const link = document.createElement('a');
+    link.href = pdfUrl;
+    link.download = `daily-astro-${new Date().toISOString().split('T')[0]}.pdf`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    addLog('PDF download initiated');
   }
 
   // Handle button click - show location request UI
@@ -184,7 +179,7 @@ export default function DailyAstro() {
                   {loading ? (
                     <>
                       <Loader2 className="w-5 h-5 animate-spin" />
-                      <span>Getting Location...</span>
+                      <span>Generating...</span>
                     </>
                   ) : (
                     <>
@@ -198,6 +193,7 @@ export default function DailyAstro() {
                   onClick={() => {
                     setShowLocationRequest(false);
                     setError(null);
+                    setPdfUrl(null);
                   }}
                   disabled={loading}
                   className="w-full px-8 py-3 bg-gray-700/50 hover:bg-gray-700 rounded-xl font-medium text-gray-200 text-base transition-all disabled:opacity-50 disabled:cursor-not-allowed"
@@ -205,6 +201,17 @@ export default function DailyAstro() {
                   Cancel
                 </button>
               </div>
+
+              {/* PDF Download Button */}
+              {pdfUrl && !loading && (
+                <button
+                  onClick={downloadPdf}
+                  className="mt-4 w-full px-8 py-4 bg-green-600 hover:bg-green-700 rounded-xl font-semibold text-white text-lg shadow-lg hover:shadow-green-500/50 transition-all flex items-center justify-center gap-3"
+                >
+                  <Download className="w-5 h-5" />
+                  <span>📥 Download My Daily Astro PDF</span>
+                </button>
+              )}
 
               <p className="text-gray-400 text-xs mt-6 leading-relaxed max-w-sm mx-auto">
                 🔒 Your location is only used to generate your astro reading and is not stored.
