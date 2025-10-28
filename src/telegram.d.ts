@@ -6,6 +6,7 @@ interface TelegramWebApp {
   ready(): void;
   expand(): void;
   close(): void;
+  openLink(url: string, options?: { try_instant_view?: boolean }): void;
   BackButton: {
     show(): void;
     hide(): void;

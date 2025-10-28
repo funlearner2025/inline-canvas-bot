@@ -75,21 +75,22 @@ export default function DailyAstro() {
     }
   }
 
-  // Handle PDF download
-  function downloadPdf() {
+  // Handle PDF opening in external browser
+  function openPdfInBrowser() {
     if (!pdfUrl) return;
     
-    addLog(`Downloading PDF from: ${pdfUrl}`);
+    addLog(`Opening PDF in external browser: ${pdfUrl}`);
     
-    // Create a temporary anchor element to trigger download
-    const link = document.createElement('a');
-    link.href = pdfUrl;
-    link.download = `daily-astro-${new Date().toISOString().split('T')[0]}.pdf`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    
-    addLog('PDF download initiated');
+    // Use Telegram Mini App SDK to open link externally
+    // This will open in Safari on iOS and Chrome on Android
+    if (window.Telegram?.WebApp) {
+      window.Telegram.WebApp.openLink(pdfUrl, { try_instant_view: false });
+      addLog('PDF opened via Telegram.WebApp.openLink');
+    } else {
+      // Fallback for non-Telegram environments
+      window.open(pdfUrl, '_blank');
+      addLog('PDF opened via window.open (fallback)');
+    }
   }
 
   // Handle button click - show location request UI
@@ -202,14 +203,14 @@ export default function DailyAstro() {
                 </button>
               </div>
 
-              {/* PDF Download Button */}
+              {/* PDF Open Button */}
               {pdfUrl && !loading && (
                 <button
-                  onClick={downloadPdf}
+                  onClick={openPdfInBrowser}
                   className="mt-4 w-full px-8 py-4 bg-green-600 hover:bg-green-700 rounded-xl font-semibold text-white text-lg shadow-lg hover:shadow-green-500/50 transition-all flex items-center justify-center gap-3"
                 >
                   <Download className="w-5 h-5" />
-                  <span>📥 Download My Daily Astro PDF</span>
+                  <span>Open File in Browser</span>
                 </button>
               )}
 
