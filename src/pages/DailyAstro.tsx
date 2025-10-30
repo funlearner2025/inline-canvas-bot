@@ -82,15 +82,12 @@ export default function DailyAstro() {
     addLog(`Opening PDF in external browser: ${pdfUrl}`);
     
     try {
-      // On Android/iOS in Telegram, force external browser by using window.location.href
-      // This bypasses Telegram's WebView and opens in the system's default browser
-      if (window.Telegram?.WebApp) {
-        // Use location.href instead of Telegram's openLink to force external browser
-        // on Android (opens in Chrome) and iOS (opens in Safari)
-        setTimeout(() => {
-          window.location.href = pdfUrl;
-        }, 100);
-        addLog('PDF opened via window.location.href (external browser)');
+      // Force opening in external browser (Safari on iOS, Chrome on Android)
+      // Using openLink without try_instant_view parameter
+      if (window.Telegram?.WebApp?.openLink) {
+        // Call openLink without any options - this opens in external browser by default
+        window.Telegram.WebApp.openLink(pdfUrl);
+        addLog('PDF opened via Telegram.WebApp.openLink (external browser)');
       } else {
         // Fallback for non-Telegram environments
         window.open(pdfUrl, '_blank');
@@ -99,7 +96,7 @@ export default function DailyAstro() {
     } catch (error) {
       console.error('Error opening PDF:', error);
       addLog(`ERROR opening PDF: ${error}`);
-      // Fallback: direct link
+      // Fallback: window.open
       window.open(pdfUrl, '_blank');
       addLog('PDF opened via window.open (error fallback)');
     }
