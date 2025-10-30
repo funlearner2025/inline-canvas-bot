@@ -81,11 +81,11 @@ export default function DailyAstro() {
     
     addLog(`Opening PDF in external browser: ${pdfUrl}`);
     
-    // Use Telegram Mini App SDK to open link externally
+    // Use Telegram Mini App SDK to open link externally in default browser
     // This will open in Safari on iOS and Chrome on Android
     if (window.Telegram?.WebApp) {
-      window.Telegram.WebApp.openLink(pdfUrl, { try_instant_view: false });
-      addLog('PDF opened via Telegram.WebApp.openLink');
+      window.Telegram.WebApp.openLink(pdfUrl);
+      addLog('PDF opened via Telegram.WebApp.openLink (default browser)');
     } else {
       // Fallback for non-Telegram environments
       window.open(pdfUrl, '_blank');
